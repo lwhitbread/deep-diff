@@ -4,7 +4,6 @@ import argparse
 import configparser
 import datetime
 
-# sys.path.append("../")
 from src.loss import *
 from src.modules import *
 from src.networks import *

@@ -7,7 +7,6 @@ from torch.distributions.normal import Normal
 import numbers
 from typing import List, Tuple, Union, Iterable
 
-
 CompositeIntType = Union[int, List[int], Tuple[int, ...]]
 CompositeFloatType = Union[float, List[float], Tuple[float, ...]]
 IntIterable = Union[int, Iterable[int]]
