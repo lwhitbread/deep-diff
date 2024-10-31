@@ -231,16 +231,6 @@ class ConditionalFeaturesGenerator(nn.Module):
             return [self.streams_wrapper[0](z)]
         elif self.nb_streams == 2:
             return [self.streams_wrapper[0](z), self.streams_wrapper[1](z)]
-            # out = []
-            # stream_0 = torch.cuda.Stream()
-            # stream_1 = torch.cuda.Stream()
-            # torch.cuda.synchronize()
-            # with torch.cuda.stream(stream_0):
-            #     out.append(self.streams_wrapper[0](z))
-            # with torch.cuda.stream(stream_1):
-            #     out.append(self.streams_wrapper[1](z))
-            # torch.cuda.synchronize()
-            # return out
 
 class UNet(nn.Module):
     
@@ -564,15 +554,11 @@ class RegNet(nn.Module):
         ) if int_steps > 0 else None
 
         self.spatial_transformer = SpatialTransformer(in_shape)
-
-        # if self.use_cortical_mask:
-        #     self.spatial_transformer_mask = SpatialTransformer(in_shape, "nearest")
     
     def forward(
             self, 
             source: torch.Tensor, 
             target: torch.Tensor,
-            # cortical_mask: torch.Tensor = None,
     ) -> tuple:
 
         x = torch.cat([source, target], dim = 1)
@@ -607,14 +593,6 @@ class RegNet(nn.Module):
             target, 
             neg_flow
         ) if self.bidirectional else None
-
-        # if self.use_cortical_mask:
-        #     assert cortical_mask is not None, \
-        #         "cortical_mask must be provided if use_cortical_mask is True"
-        #     cortical_mask = self.spatial_transformer_mask(
-        #         cortical_mask,
-        #         pos_flow,
-        #     )
 
         return (
             y_source, 
@@ -792,7 +770,6 @@ class Warp(nn.Module):
             adj_warps: bool = False,
             lambda_rate: float = 0.9,
             min_max_args: dict = None,
-            # use_cortical_mask: bool = False,
             nb_field_layers: int = 3,
             pred_arbitrary_cond_temps: bool = False,
     ) -> None:
@@ -815,7 +792,6 @@ class Warp(nn.Module):
         self.device = device
         self.zero_mean_cons = zero_mean_cons
         self.adj_warps = adj_warps
-        # self.use_cortical_mask = use_cortical_mask
         
         self.gen_features = ConditionalFeaturesGenerator(
             gen_features = self.gen_features, 
@@ -875,12 +851,6 @@ class Warp(nn.Module):
             self.interp_mode,
         )
 
-        # if self.use_cortical_mask:
-        #     self.warp_cortical_mask = SpatialTransformer(
-        #         self.img_dims, 
-        #         "nearest",
-        #     )
-
         self.cond_temp_intensity_field = CreateField(
             dec_feats = self.gen_features.nb_out_feats,
             nb_dims = len(self.img_dims),
@@ -905,7 +875,6 @@ class Warp(nn.Module):
             int_smoothing_args = self.int_smoothing_args_st_2,
             int_downsize = downsize_factor_vec_st_2,
             use_tanh_vecint_act = use_tanh_vecint_act,
-            # use_cortical_mask = self.use_cortical_mask,
             bidirectional = True,
             nb_field_layers = nb_field_layers,
             unet_upsample_mode = unet_upsample_mode,
@@ -1072,10 +1041,8 @@ class Warp(nn.Module):
             training: bool = True,
             intensity_field_multiplier_st_1: float = 1.0,
             intensity_field_multiplier_st_2: float = 1.0,
-            # epoch: int = None,
             means_idx_0: torch.Tensor = None,
             prop_means_idx_0: torch.Tensor = None,
-            # cortical_mask: torch.Tensor = None,
     ) -> list:
         
         # generate features     
@@ -1087,8 +1054,6 @@ class Warp(nn.Module):
         flow_st_1 = self.gen_cond_temp_field(
             gen_features[0],
         )
-
-        # if self.mean_outside_loop or not self.zero_mean_cons:
 
         cond_temp_warp = flow_st_1
         neg_cond_temp_warp = -cond_temp_warp
@@ -1126,15 +1091,6 @@ class Warp(nn.Module):
             cond_temp_warp,
         )
 
-        # if self.use_cortical_mask:
-        #     assert cortical_mask is not None, \
-        #         "Cortical mask is None, but use_cortical_mask is True"
-            
-        #     cortical_mask = self.warp_cortical_mask(
-        #         cortical_mask, 
-        #         cond_temp_warp,
-        #     ) 
-
         if self.zero_mean_cons:
             
             _mean_fields_idx_0 = self.mean_trackers.get_mean_field(means_idx_0)
@@ -1145,7 +1101,6 @@ class Warp(nn.Module):
             
             _mean_fields = _mean_fields_idx_0 + _mean_fields_idx_1
             cond_temp_warp_unbiased = flow_st_1 + _mean_fields
-            # cond_temp_warp_unbiased = flow_st_1 - _mean_fields
 
             if self.vec_downsize is not None:
                 cond_temp_warp_unbiased = self.vec_downsize(
@@ -1170,23 +1125,10 @@ class Warp(nn.Module):
                 )
 
             if self.adj_warps:
-                # if self.mean_outside_loop:
                 _cond_temp_unbiased = self.warp(
                     template, 
                     cond_temp_warp_unbiased,
                 )
-
-        # if self.use_cortical_mask:
-        #     if not self.zero_mean_cons:
-        #         pass
-        #     else:   
-        #         assert cortical_mask is not None, \
-        #             "Cortical mask is None, but use_cortical_mask is True"
-                
-        #         cortical_mask = self.warp_cortical_mask(
-        #             cortical_mask, 
-        #             cond_temp_warp,
-        #         ) 
 
         intensity_field_st_1 = self.cond_temp_intensity_field(
             gen_features[0] if self.nb_gen_features_streams == 1 else gen_features[1],
@@ -1217,7 +1159,6 @@ class Warp(nn.Module):
         _x, y, pos_flow, neg_flow, _, flow_st_2 = self.reg(
             cond_temp,
             target,
-            # cortical_mask = cortical_mask if self.use_cortical_mask else None,
         )
 
         x, intensity_field_st_2, intensity_modulation_st_2 = self.intensity_net_phase_2(
@@ -1267,302 +1208,3 @@ class Warp(nn.Module):
                 intensity_modulation_st_1,
                 intensity_modulation_st_2,
             ]
-
-# TODO: build inverse warp map model to train with warps from st 1, and trained against st 1 flow
-# TODO: Model is to ingest st 1 cond warps and predict st 1 flow, using trained warps and flow from st 1
-# TODO: Model is to be trained with st 1 flow as target
-# TODO: Model will then be frozen, and will move st 2 warps, tracked in mean trackers back to st 1 velocity field space using inverse warp map
-# TODO: We can then differentially use smoothing in st 1 and st 2
-# TODO: Model is to be trained with the same smoothing hyperparams as st 1, and then frozen
-        
-            # nb_dims: int = 2,
-            # gen_features: int = 1,
-            # gen_features_linear_layers: int = 1,
-            # gen_features_blocks: int = 6,
-            # nb_gen_features_streams: int = 1,
-            # img_dims: Tuple[int, ...] = (192, 192),
-            # int_steps: int = 7,
-            # interp_mode: str = "linear",
-
-            # #gen_intensity_blocks: int = 6,
-            # nb_unet_features_reg: List[List[int]] = [
-            #     [16, 32, 32, 32], # encoder
-            #     [32, 32, 32, 32, 32, 16, 16]  # decoder
-            # ],
-            # nb_unet_features_int: List[List[int]] = [
-            #     [16, 32, 32, 32], # encoder
-            #     [32, 32, 32, 32, 32, 16, 16]  # decoder
-            # ],
-            # int_smoothing_args_st_1: dict = dict(
-            #     use_smoothing = False, 
-            #     kernel_size = 3, 
-            #     sigma = 1.0
-            # ),
-            # int_smoothing_args_st_2: dict = dict(
-            #     use_smoothing = False,
-            #     kernel_size = 3,
-            #     sigma = 1.0,
-            # ),
-            # int_smoothing_args_mean_trackers: dict = dict(
-            #     use_smoothing = False,
-            #     kernel_size = 3,
-            #     sigma = 1.0,
-            # ),
-            # intensity_field_act = "Sigmoid",
-            # intensity_field_act_mult = 3.,
-            # intensity_act = "exp",
-            # downsize_factor_intensity_st_1: float = 2,
-            # downsize_factor_intensity_st_2: float = 2,
-            # downsize_factor_vec_st_1: float = 2,
-            # downsize_factor_vec_st_2: float = 1,
-            # device: str = "cpu",
-            # use_tanh_vecint_act: bool = False,
-            # zero_mean_cons: bool = False,
-            # adj_warps: bool = False,
-            # prior_discount_factor: float = 0.2,
-            # mean_tracker_max_weight: float = 10.,
-            # use_cum_tracker: bool = False,
-            # use_lambda_update_mean_tracker: bool = False,
-            # lambda_rate: float = 0.9,
-            # mean_outside_loop: bool = False,
-            # min_max_args: dict = None,
-            # use_cortical_mask: bool = False,
-            # nb_field_layers: int = 3,
-            # pred_arbitrary_cond_temps: bool = False,
-
-# class InverseWarpMap(nn.Module):
-
-#     @store_config_args
-#     def __init__(
-#             self,
-#             img_dims: Tuple[int, ...],
-#             nb_dims: int,
-#             int_steps: int = 7,
-#             interp_mode: str = "linear",
-#             nb_unet_features: List[List[int]] = [
-#                 [16, 32, 32, 32], # encoder
-#                 [32, 32, 32, 32, 32, 16, 16]  # decoder
-#             ],
-#             int_smoothing_args: dict = dict(
-#                 use_smoothing = False,
-#                 kernel_size = 3,
-#                 sigma = 1.0,
-#             ),
-#             use_tanh_vecint_act: bool = False,
-#             downsize_factor: float = 1.05,
-#             device: str = "cpu",
-#             nb_field_layers: int = 2,
-#     ) -> None:
-#         super().__init__()
-
-#         self.img_dims = img_dims
-#         self.nb_dims = nb_dims
-#         self.int_steps = int_steps
-#         self.interp_mode = interp_mode
-#         self.nb_unet_features = nb_unet_features
-#         self.int_smoothing_args = int_smoothing_args
-#         self.use_tanh_vecint_act = use_tanh_vecint_act
-#         self.downsize_factor = downsize_factor
-#         self.device = device
-        
-
-# # class UNet(nn.Module):
-    
-# #     """
-# #     Adapted from https://github.com/voxelmorph/voxelmorph.
-
-# #         in_shape: tuple
-# #             the shape of the spatial input to the network e.g., (64, 64, 64)
-# #         in_features: int
-# #             the number of input features e.g., 1 for a single channel image
-# #         nb_dims: int
-# #             the number of spatial dimensions of the input
-# #         nb_features: list[list, list]
-# #             the number of features per layer for the encoder and decoder respectively
-# #         nb_levels: int
-# #             the number of levels in the network, used if nb_features is not specified
-# #         nb_convs_per_level: int
-# #             the number of convolutions per level
-# #         feature_multiple: int
-# #             the multiple of features to use for each level
-# #         max_pool: int
-# #             the size of the max pooling kernel
-# #         activation: str
-# #             the activation function to use (i.e., GELU), can use any of the activations in torch.nn 
-# #         normalisation: str
-# #             the normalisation to use (i.e., Instance), can use any of the normalisations in torch.nn
-# #         bias: bool
-# #             whether to use bias in the convolutional layers
-# #         dropout: float
-# #             the dropout probability to use (Not implemented yet)
-# #         upsample_mode: str
-# #             the mode to use for upsampling (i.e., nearest)
-# #     """
-
-# #     @store_config_args
-# #     def __init__(
-# #             self,
-# #             in_shape: Tuple[int, ...],
-# #             in_features: int,
-# #             nb_dims: int,
-# #             nb_features: List[int] = None,
-# #             nb_levels: int = None,
-# #             nb_convs_per_level: int = 1,
-# #             feature_multiple: int = 1,
-# #             max_pool: int = 2,
-# #             activation: str = "GELU",
-# #             normalisation: str = "Instance",
-# #             bias: bool = True,
-# #             upsample_mode: str = "nearest",
-# #             half_resolution: bool = False,
-
-
-#         self.inverse_warp_map = UNet(
-#             in_shape = img_dims,
-#             in_features = 3, # 3 features for i,j,k for 3 dim warp fields
-#             nb_dims = nb_dims,
-#             nb_features = nb_unet_features,
-#             nb_levels = 4,
-#             nb_convs_per_level = 2,
-#             feature_multiple = 1,
-#             max_pool = 2,
-#             activation = "GELU",
-#             normalisation = "Instance",
-#             bias = True,
-#             upsample_mode = interp_mode,
-#             half_resolution = False,
-#         )
-
-#         self.create_field = CreateField(
-#             dec_feats = self.inverse_warp_map.final_nb_feats, 
-#             nb_dims = nb_dims,
-#             nb_layers = nb_field_layers,
-#         )
-
-#         if self.int_steps > 0 and downsize_factor > 1:
-#             self.vec_downsize = ResizeTransform(
-#                 vel_resize = downsize_factor, 
-#                 nb_dims = self.nb_dims,
-#                 out_shape = None,
-#             )
-#             self.vec_upsize = ResizeTransform(
-#                 vel_resize = 1 / downsize_factor, 
-#                 nb_dims = self.nb_dims,
-#                 out_shape = self.img_dims,
-#             )
-#             self.integrator_in_shape = tuple([int(s / downsize_factor) for s in self.img_dims])
-
-#         else:
-#             self.vec_downsize = None
-#             self.vec_upsize = None
-#             self.integrator_in_shape = self.img_dims
-        
-#         self.integrate_flow = IntegrationLayer(
-#             self.integrator_in_shape, 
-#             self.int_steps, 
-#             kernel_size = self.int_smoothing_args["kernel_size"], 
-#             sigma = self.int_smoothing_args["sigma"],
-#             use_tanh_act = use_tanh_vecint_act,
-#         )
-
-#         self.warp = SpatialTransformer(
-#             self.img_dims, 
-#             self.interp_mode,
-#         )
-
-#         self.initialise_parameters()
-
-#     @staticmethod
-#     def weight_init(
-#             module: nn.Module, 
-#             method: InitType, 
-#             **kwargs,
-#     ) -> None:
-        
-#         if isinstance(
-#             module, 
-#             (
-#                 nn.Conv3d, 
-#                 nn.Conv2d, 
-#                 nn.ConvTranspose3d, 
-#                 nn.ConvTranspose2d, 
-#                 nn.Linear,
-#             )
-#         ):
-#             method(module.weight, **kwargs)
-
-#     @staticmethod
-#     def bias_init(
-#             module: nn.Module, 
-#             method: InitType, 
-#             **kwargs
-#     ) -> None:
-        
-#         if isinstance(
-#             module, 
-#             (
-#                 nn.Conv3d, 
-#                 nn.Conv2d, 
-#                 nn.ConvTranspose3d, 
-#                 nn.ConvTranspose2d, 
-#                 nn.Linear,
-#             )
-#         ):
-#             if module.bias is not None:
-#                 method(module.bias, **kwargs)
-    
-#     def initialise_parameters(
-#             self,
-#             method_weights: InitType = nn.init.kaiming_uniform_,
-#             method_bias: InitType = nn.init.zeros_,
-#             kwargs_weights = {},
-#             kwargs_bias = {},
-#     ) -> None:
-        
-#         for module in self.modules():
-#             self.weight_init(
-#                 module, 
-#                 method_weights, 
-#                 **kwargs_weights,
-#             )
-#             self.bias_init(
-#                 module, 
-#                 method_bias, 
-#                 **kwargs_bias,
-#             )
-        
-#         # Initialise flow weights
-#         self.create_field.conv_layers[-1].conv.weight = nn.Parameter(
-#             Normal(0, 1e-5).sample(
-#                 self.create_field.conv_layers[-1].conv.weight.shape
-#             )
-#         )
-#         self.create_field.conv_layers[-1].conv.bias = nn.Parameter(
-#             torch.zeros(
-#                 self.create_field.conv_layers[-1].conv.bias.shape
-#             )
-#         )
-    
-#     def forward(
-#             self, 
-#             warp: torch.Tensor, 
-#             # flow: torch.Tensor,
-#     ) -> torch.Tensor:
-        
-#         # predict flow from deformation field
-#         flow = self.inverse_warp_map(warp)
-#         flow = self.create_field(flow)
-
-#         # for evaluation, integrate the predicted flow to get the predicted warp
-#         # to compare with the ground truth warp
-#         if self.int_steps > 0 and self.downsize_factor > 1:
-#             pred_warp = self.vec_downsize(flow)
-#             pred_warp = self.integrate_flow(pred_warp)
-#             pred_warp = self.vec_upsize(pred_warp)
-#         else:
-#             pred_warp = self.integrate_flow(flow)
-
-#         return [
-#             flow,
-#             pred_warp,
-#         ]

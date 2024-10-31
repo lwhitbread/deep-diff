@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 
-
 def generate_gaussian_kernel(kernel_size, sigma):
     # Generate a 1D Gaussian kernel
     x = torch.linspace(-1, 1, kernel_size)

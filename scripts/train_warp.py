@@ -15,19 +15,12 @@ if __name__ == "__main__":
 # Get system arguments to apply through script
     parser = argparse.ArgumentParser() 
     parser.add_argument("--config-file", required=True, help="config filename to use")
-    # parser.add_argument("--location", required=True, help="training location (local, aiml, phoenix)")
     parser.add_argument("--run-id", required=True, help="run id to use for saving results")
-    # parser.add_argument("--nb-gpus", required=False, help="number of gpus to use for training", default = 1)
-    # parser.add_argument("--linreg", required=True, help="use linear registered dataset", default = True)
     parser.add_argument("--device", required=False, help="device to use for training", default = "0")
     parser.add_argument("--checkpoint", required=False, help="path to checkpoint", default = None)
     parser.add_argument("--use-checkpoint", required=False, help="use checkpoint", default = False)
     args = parser.parse_args()
     config_file = args.config_file
-    # location = args.location
-    # nb_gpus = int(args.nb_gpus)
-    # use_linreg_dataset = eval(args.linreg)
-    # use_indiv_template = eval(args.use_indiv_template)
     device = int(args.device)
     use_checkpoint = eval(args.use_checkpoint)
     
@@ -81,18 +74,9 @@ if __name__ == "__main__":
         constant_sched_lr = 1e-4
     show_plots = eval(config["run_args"]["show_plots"])
     show_plots_freq = int(config["run_args"]["show_plots_freq"])
-    # use_cortical_mask = eval(config["run_args"]["use_cortical_mask"])
-    # use_cortical_mask_inc_background = eval(config["run_args"]["use_cortical_mask_inc_background"])
-    # blur_mask_args = eval(config["run_args"]["blur_mask_args"])
     
     dataset_args = eval(config["dataset_args"]["dataset_args"])
-    # template_type = config["dataset_args"]["template_type"]
-    # assert template_type in ["group_template", "indiv_template"], "template_type must be one of: group, individual"
     
-    # if location != "local":
-    #     print(f"Check that dataset paths are correct in the config file: {config_file}")
-    
-
     dataset_root = config[f"data_paths"]["dataset_root"]
     template_path = config[f"data_paths"]["template_path"]
 
@@ -183,12 +167,7 @@ if __name__ == "__main__":
     use_tanh_vecint_act = eval(config["model_args"]["use_tanh_vecint_act"])
     zero_mean_cons = eval(config["model_args"]["zero_mean_cons"])
     adj_warps = eval(config["model_args"]["adj_warps"])
-    # prior_discount_factor = float(config["model_args"]["prior_discount_factor"])
-    # mean_tracker_max_weight = float(config["model_args"]["mean_tracker_max_weight"])
-    # use_cum_tracker = eval(config["model_args"]["use_cum_tracker"])
-    # use_lambda_update_mean_tracker = eval(config["model_args"]["use_lambda_update_mean_tracker"])
     lambda_rate = float(config["model_args"]["lambda_rate"])
-    # mean_outside_loop = eval(config["model_args"]["mean_outside_loop"])
     compile_flag = None
     try:
         compile_flag = eval(config["model_args"]["compile_flag"])
@@ -198,11 +177,7 @@ if __name__ == "__main__":
     dls_and_template = get_dls_and_template(
         **dataset_args,
     )
-
-    synth_dataset = dataset_args["dataset"] == SynthDataset
-
-    if not synth_dataset:
-        min_max_args = dls_and_template[-2]
+    min_max_args = dls_and_template[-2]
 
     model = Warp(
         nb_dims = nb_dims,
@@ -230,8 +205,7 @@ if __name__ == "__main__":
         zero_mean_cons = zero_mean_cons,
         adj_warps = adj_warps,
         lambda_rate = lambda_rate,
-        min_max_args = min_max_args if not synth_dataset else None,
-        # use_cortical_mask = use_cortical_mask,
+        min_max_args = min_max_args,
         nb_field_layers = create_field_nb_layers,
     )
 
@@ -265,16 +239,7 @@ if __name__ == "__main__":
         id = str(run_id),
     )
 
-    # avail_devices = torch.cuda.device_count()
-    # if nb_gpus > avail_devices:
-    #     print(f"Warning: nb_gpus ({nb_gpus}) > available devices ({avail_devices})")
-    #     print(f"Setting nb_gpus to {avail_devices}")
-    #     nb_gpus = avail_devices
-
     model.summary_mode(summary_mode = False)
-
-    # if nb_gpus > 1:
-    #     model = nn.DataParallel(model, device_ids = list(range(nb_gpus)))
     model = model.to(device)
 
     if torch.__version__.split(".")[0] == "2":
@@ -316,12 +281,6 @@ if __name__ == "__main__":
         gradient_accumulation_steps = gradient_accumulation_steps,
         use_age_buckets = use_age_buckets,
         run_monitor_args = run_monitor_args,
-        # progress_plots = progress_plots,
-        # show_int_mod_maps = show_int_mod_maps,
-        # save_plot_data = save_plot_data,
-        # progress_plots_freq = progress_plots_freq,
-        # show_plots = False,
-        # show_plots_freq = show_plots_freq,
         model_save_freq = model_save_freq,
         enable_tqdm = enable_tqdm,
         runtime_dir = runtime_dir,
@@ -332,14 +291,7 @@ if __name__ == "__main__":
         nb_epochs_ignore_ct_unbiased_loss = nb_epochs_ignore_ct_unbiased_loss,
         downsize_factor_int_st_1 = downsize_factor_int_st_1,
         downsize_factor_int_st_2 = downsize_factor_int_st_2,
-        # max_examples = max_examples,
-        # training_location = location,
         zero_mean_cons = zero_mean_cons,
-        # use_cum_tracker = use_cum_tracker,
-        synth_dataset = synth_dataset,
-        # use_cortical_mask = use_cortical_mask,
-        # blur_mask_args = blur_mask_args,
-        # mean_outside_loop = mean_outside_loop,
         checkpoint = args.checkpoint,
         use_checkpoint = use_checkpoint,
     )

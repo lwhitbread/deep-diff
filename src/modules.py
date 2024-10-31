@@ -8,9 +8,6 @@ import numbers
 from typing import List, Tuple, Union, Iterable
 
 
-# sys.path.append("../")
-
-
 CompositeIntType = Union[int, List[int], Tuple[int, ...]]
 CompositeFloatType = Union[float, List[float], Tuple[float, ...]]
 IntIterable = Union[int, Iterable[int]]
@@ -109,12 +106,9 @@ class CreateField(nn.Module):
             field_multiplier: float = 1., # only used for intensity modulation
         ) -> torch.Tensor:
         
-        # TODO: should we be squashing the intensity mod field differently?
         if self.intensity_modulation:
             for module in self.conv_layers:
                 x = module(x)
-            
-            # return x * field_multiplier
             return self.post_activation_mult * (self.activation(x) - 0.5) * field_multiplier
         else:
             for module in self.conv_layers:
@@ -193,7 +187,7 @@ class IntensityModulationBlock(nn.Module):
         if field_multiplier == 0:
             return x, intensity_modulation
 
-        x = torch.clip(x, 0, 1.1) # was clipped to 1.3
+        x = torch.clip(x, 0, 1.1)
         
         return x, intensity_modulation
 
@@ -226,10 +220,6 @@ class SpatialTransformer(nn.Module):
             x: torch.Tensor, 
             flow: torch.Tensor,
     ) -> torch.Tensor:
-
-        # print(f"flow shape: {flow.shape}")
-        # print(f"x shape: {x.shape}")
-        # print(f"self.size shape: {self.size}")
 
         assert flow.shape[2:] == x.shape[2:] == self.size, \
             "flow and x must have the same size as the grid"
