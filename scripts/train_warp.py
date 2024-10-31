@@ -23,6 +23,7 @@ if __name__ == "__main__":
     config_file = args.config_file
     device = int(args.device)
     use_checkpoint = eval(args.use_checkpoint)
+    checkpoint = args.checkpoint
     
     run_id = args.run_id
     assert run_id != "", "run_id must not be empty"
@@ -48,10 +49,6 @@ if __name__ == "__main__":
     clip_grad_norm = float(config["run_args"]["clip_grad_norm"])
     gradient_accumulation_steps = int(config["run_args"]["gradient_accumulation_steps"])
     use_age_buckets = eval(config["run_args"]["use_age_buckets"])
-    progress_plots = eval(config["run_args"]["progress_plots"])
-    save_plot_data = eval(config["run_args"]["save_plot_data"])
-    progress_plots_freq = int(config["run_args"]["progress_plots_freq"])
-    show_int_mod_maps = eval(config["run_args"]["show_int_mod_maps"])
     model_save_freq = int(config["run_args"]["model_save_freq"])
     enable_tqdm = eval(config["run_args"]["enable_tqdm"])
     intensity_field_multiplier_st_1 = float(config["run_args"]["intensity_field_multiplier_st_1"])
@@ -59,21 +56,13 @@ if __name__ == "__main__":
     freeze_intensity_st_1 = int(config["run_args"]["freeze_intensity_st_1"])
     freeze_intensity_st_2 = int(config["run_args"]["freeze_intensity_st_2"])
     nb_epochs_ignore_ct_unbiased_loss = int(config["run_args"]["nb_epochs_ignore_ct_unbiased_loss"])
-    max_examples = int(config["run_args"]["max_examples"])
     optimiser = config["run_args"]["optimiser"]
     optimiser_args = eval(config["run_args"]["optimiser_args"])
     scheduler = config["run_args"]["scheduler"]
     scheduler_args = eval(config["run_args"]["scheduler_args"])
-    try:
-        init_with_constant_sched = eval(config["run_args"]["init_with_constant_sched"])
-        constant_sched_epochs = int(config["run_args"]["constant_sched_epochs"])
-        constant_sched_lr = float(config["run_args"]["constant_sched_lr"])
-    except:
-        init_with_constant_sched = False
-        constant_sched_epochs = 0
-        constant_sched_lr = 1e-4
-    show_plots = eval(config["run_args"]["show_plots"])
-    show_plots_freq = int(config["run_args"]["show_plots_freq"])
+    init_with_constant_sched = eval(config["run_args"]["init_with_constant_sched"])
+    constant_sched_epochs = int(config["run_args"]["constant_sched_epochs"])
+    constant_sched_lr = float(config["run_args"]["constant_sched_lr"])
     
     dataset_args = eval(config["dataset_args"]["dataset_args"])
     
@@ -292,24 +281,8 @@ if __name__ == "__main__":
         downsize_factor_int_st_1 = downsize_factor_int_st_1,
         downsize_factor_int_st_2 = downsize_factor_int_st_2,
         zero_mean_cons = zero_mean_cons,
-        checkpoint = args.checkpoint,
+        checkpoint = checkpoint,
         use_checkpoint = use_checkpoint,
     )
 
     trainer.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

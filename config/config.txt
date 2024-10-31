@@ -13,6 +13,7 @@ template_path_linreg = <path to the group template in .nii.gz format>
 # as `loader_0` for training, `loader_1` for validation and `loader_2` for the testset.
 # Note that the loader proportions are ignored when using predefined splits and that 
 # the testset will not be used during training.
+
 dataset_args = dict(
     dataset = CondWarpDataset,
     batch_size = 1,
@@ -44,10 +45,6 @@ clip_grad = True
 clip_grad_norm = 2.0
 gradient_accumulation_steps = 1
 use_age_buckets = False
-progress_plots = True
-save_plot_data = True
-progress_plots_freq = 1
-show_int_mod_maps = True
 model_save_freq = -1
 enable_tqdm = True
 intensity_field_multiplier_st_1 = 0
@@ -60,9 +57,6 @@ freeze_intensity_st_2 = 400
 nb_epochs_ignore_ct_unbiased_loss = 0
 nb_dims = 3
 epochs = 400
-max_examples = 2
-show_plots = False
-show_plots_freq = 10
 
 optimiser = AdamW
 optimiser_args = dict(
@@ -83,6 +77,7 @@ scheduler_args = dict(
     cooldown = 2,
     min_lr = 1e-6,
     eps = 1e-08,)
+
 init_with_constant_sched = False
 constant_sched_epochs = 0
 constant_sched_lr = 1e-4
@@ -103,7 +98,6 @@ nb_feature_streams = 1
 int_steps = 7
 interp_mode = linear
 create_field_nb_layers = 1
-create_field_nb_layers_inv_warp = 2
 
 int_smoothing_args_st_1 = dict(
 	use_smoothing = True,
