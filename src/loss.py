@@ -1,13 +1,9 @@
-# import sys
-# import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
 import kornia.filters as filters
 from typing import Union, List
-
-# sys.path.append("../")
 
 Scalar = Union[int, float]
 ncc_win = List[int]
@@ -266,8 +262,6 @@ class Dice:
         dice = torch.mean(top / bottom)
         return -dice
 
-
-# TODO: Update grad loss to use the kernels from kornia (get the cross-product components of gradients)
 class Grad:
     """
     N-D gradient loss.
@@ -357,9 +351,6 @@ class Grad:
                 grad = grad * self.loss_mult
             return grad
 
-
-
-#### TO BE CONSIDERED
 
 def Get_Ja(flow):
     '''
