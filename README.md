@@ -22,7 +22,7 @@ Training and validation data should be linearly registered to a common reference
 ## Training
 To train a purely geometric conditional brain template construction network, run the following command from ./sh, ensuring that `train.sh` is executable (run `chmod +x train.sh` if not):
 ```bash
-./train.sh -c config.txt -i < run_id > -d < cuda_device_no > -u True 
+./train.sh -c config.txt -i <run_id> -d <cuda_device_no> -u True 
 ```
 
 This will train the network using the configuration specified in `config.txt` on the specified cuda device. The `-u` flag is used to specify whether to save full checkpoints during training. The optional `-e` flag can be used to provide a path to a checkpoint to resume training from.
