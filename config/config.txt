@@ -1,0 +1,165 @@
+# config file for CondWarp training
+
+[data_paths]
+# We expect the images to be in .nii.gz format and there to be a csv file in the dataset root 
+# with the relational paths to the images contained within under the column 'scan_path'.
+dataset_root_linreg = <path to the dataset root> 
+template_path_linreg = <path to the group template in .nii.gz format>
+
+
+[dataset_args]
+# optional predefined splits of the dataset can be used by setting predefined_split to True
+# and providing the paths to the csv files containing the splits with the loaders specified 
+# as `loader_0` for training, `loader_1` for validation and `loader_2` for the testset.
+# Note that the loader proportions are ignored when using predefined splits and that 
+# the testset will not be used during training.
+dataset_args = dict(
+    dataset = CondWarpDataset,
+    batch_size = 1,
+    num_loaders = 3,
+    loader_proportions = [0.8, 0.1, 0.1],
+    dtype = "float32",
+    max_samples_per_subject = None,
+    downsample = True,
+    downsample_dim = 192,
+    age_buckets = 10,
+    num_workers = 12,
+    template_avg_int_shift_factor = 1.0,
+    percentile_normalisation = 99.9,
+    predefined_split = False,
+    loader_file_paths = ["../dataset_paths/loader_0.csv",
+                        "../dataset_paths/loader_1.csv",
+                        "../dataset_paths/loader_2.csv"],
+    mean_tracker_width = 5,) # width of mean trackers in years for age condition, 
+                             # passed to dataset args as it is used in
+
+# argument ops: group_template, indiv_template
+template_type = group_template
+
+[run_args]
+wandb_log = False
+wandb_offline = True
+mixed_precision = True
+clip_grad = True
+clip_grad_norm = 2.0
+gradient_accumulation_steps = 1
+use_age_buckets = False
+progress_plots = True
+save_plot_data = True
+progress_plots_freq = 1
+show_int_mod_maps = True
+model_save_freq = -1
+enable_tqdm = True
+intensity_field_multiplier_st_1 = 0
+intensity_field_multiplier_st_2 = 0
+# number of epochs to freeze intensity stage 1 for
+freeze_intensity_st_1 = 400
+# number of epochs to freeze intensity stage 2 for
+freeze_intensity_st_2 = 400
+# number of epochs to ignore ct_unbiased_loss for
+nb_epochs_ignore_ct_unbiased_loss = 0
+nb_dims = 3
+epochs = 400
+max_examples = 2
+show_plots = False
+show_plots_freq = 10
+
+optimiser = AdamW
+optimiser_args = dict(
+    lr = 1e-4, 
+    betas = (0.9, 0.999), 
+    eps = 1e-08, 
+    weight_decay = 0.01,
+    amsgrad = True,)
+
+scheduler = ReduceLROnPlateau
+scheduler_args = dict(
+    mode = "min",
+    factor = 0.5,
+    patience = 12,
+    verbose = True,
+    threshold = 1e-5,
+    threshold_mode = "rel",
+    cooldown = 2,
+    min_lr = 1e-6,
+    eps = 1e-08,)
+init_with_constant_sched = False
+constant_sched_epochs = 0
+constant_sched_lr = 1e-4
+
+[model_args]
+nb_unet_feats_reg = [
+    [8, 16, 32, 64],
+    [64, 64, 32, 16, 8, 8, 8]]
+
+nb_unet_feats_int = [
+    [8, 8, 16, 32],           
+    [32, 32, 16, 8, 8, 8, 8]]
+
+img_dims = (192, 192, 192)
+gen_features = 1
+gen_features_blocks = 6
+nb_feature_streams = 1
+int_steps = 7
+interp_mode = linear
+create_field_nb_layers = 1
+create_field_nb_layers_inv_warp = 2
+
+int_smoothing_args_st_1 = dict(
+	use_smoothing = True,
+	kernel_size = 3,
+	sigma = 1.0,)
+
+int_smoothing_args_st_2 = dict(
+    use_smoothing = True,
+    kernel_size = 3,
+    sigma = 1.0,)    
+
+int_smoothing_args_mean_trackers = dict(
+    use_smoothing = True,
+    kernel_size = 3,
+    sigma = 1.0,)
+
+intensity_field_act = Sigmoid
+intensity_field_act_mult = 5
+intensity_act = exp
+downsize_factor_int_st_1 = 8
+downsize_factor_int_st_2 = 8
+downsize_factor_vec_st_1 = 1.4142135623730951
+downsize_factor_vec_st_2 = 1
+use_tanh_vecint_act = False
+zero_mean_cons = True
+adj_warps = True
+lambda_rate = 0.9
+compile_flag = True
+unet_upsample_mode = nearest
+
+[loss_args]
+loss_args = {
+    "SparsePenalty" : {
+        "use_spatial_grad" : True,
+        "spatial_grad_mult" : 5e1,
+        "threshold" : 0.2,},
+    "region_weights" : {
+        "subcortex" : 30,
+        "cortex" : 1,
+        "anchor" : 8,}}
+
+loss_weights = {
+    "recon" :  1.00, 
+    "grad_1" : 0.01, 
+    "disp_1" : 0.01, 
+    "int_1" :  0.00, 
+    "grad_2" : 0.01, 
+    "disp_2" : 0.01, 
+    "int_2" :  0.00,
+    "mean_trackers" : 0.0,
+    "cond_temp_unbiased" : 1.00,
+    "vec_magnitude" : 0.5,
+    "vec_cosine" : 0.5,
+    "vec_magnitude_penalty" : "l2",}
+
+use_ncc = False
+use_mixed_ncc_mse = False
+mixed_ncc_weight = 0.01
+ncc_window = [9,9,9]

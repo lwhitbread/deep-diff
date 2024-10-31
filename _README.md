@@ -1,6 +1,5 @@
 # Deep-diffeomorphic networks for conditional brain templates
 ### [Paper](https://www.biorxiv.org/content/10.1101/2024.07.05.602288)
-Official implementation of "Deep-diffeomorphic networks for conditional brain templates"
 
 Pytorch code for *Deep-diffeomorphic networks for conditional brain templates*, bioRxiv 2024.
 
