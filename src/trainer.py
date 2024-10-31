@@ -5,12 +5,12 @@ import torch.utils.data as data
 import sys
 import os
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from tqdm import tqdm 
-from typing import List, Tuple, Dict, Union, Optional, Callable, Iterable
+from typing import Union, Iterable
 import pandas as pd
-import skimage
-import pickle
+# import skimage
+# import pickle
 
 sys.path.append("../")
 from src.loss import *
@@ -47,16 +47,16 @@ class Trainer:
         gradient_accumulation_steps: int = 1,
         use_age_buckets: bool = False,
         run_monitor_args: int = None,
-        progress_plots: bool = False,
-        show_int_mod_maps: bool = False,
-        save_plot_data: bool = False,
-        progress_plots_freq: int = 10,
-        show_plots: bool = False,
-        show_plots_freq = 10,
+        # progress_plots: bool = False,
+        # show_int_mod_maps: bool = False,
+        # save_plot_data: bool = False,
+        # progress_plots_freq: int = 10,
+        # show_plots: bool = False,
+        # show_plots_freq = 10,
         model_save_freq: int = -1,
         enable_tqdm: bool = False,
         runtime_dir: str = None,
-        max_examples: int = 10,
+        # max_examples: int = 10,
         intensity_field_multiplier_st_1: FloatIterable = None,
         intensity_field_multiplier_st_2: FloatIterable = None,
         freeze_intensity_st_1: int = 0,
@@ -79,7 +79,7 @@ class Trainer:
         self.nb_dims = nb_dims
         assert self.nb_dims in [2, 3], "Invalid number of dimensions" 
         self.epochs = epochs
-        self.max_examples = max_examples
+        # self.max_examples = max_examples
         self.loss_weights = loss_weights
         self.dataset_args = dataset_args
         self.dls_and_template = dls_and_template
@@ -126,10 +126,10 @@ class Trainer:
         self.constant_sched_epochs = constant_sched_epochs
         self.constant_sched_lr = constant_sched_lr
         self.len_train_loader = None
-        self.progress_plots = progress_plots
-        self.show_int_mod_maps = show_int_mod_maps
-        self.save_plot_data = save_plot_data
-        self.progress_plots_freq = progress_plots_freq
+        # self.progress_plots = progress_plots
+        # self.show_int_mod_maps = show_int_mod_maps
+        # self.save_plot_data = save_plot_data
+        # self.progress_plots_freq = progress_plots_freq
         self.model_save_freq = model_save_freq
         self.enable_tqdm = enable_tqdm
         self.mixed_precision = mixed_precision
@@ -151,8 +151,8 @@ class Trainer:
         if self.runtime_dir is None:
             self.runtime_dir = os.getcwd()
         # self.training_location = training_location
-        self.show_plots = show_plots
-        self.show_plots_freq = show_plots_freq
+        # self.show_plots = show_plots
+        # self.show_plots_freq = show_plots_freq
         # self.compile_flag = compile_flag
 
         self.network_loop = self._network_loop
@@ -709,9 +709,9 @@ class Trainer:
         epoch_total_loss = returns[0]
         mean_epoch_loss = returns[1]
         int_dict = returns[2]
-        if epoch_type == "val" and self.progress_plots:
-            if (epoch + 1) % self.progress_plots_freq == 0:
-                past_results  = returns[-1]
+        # if epoch_type == "val" and self.progress_plots:
+        #     if (epoch + 1) % self.progress_plots_freq == 0:
+        #         past_results  = returns[-1]
     
         
         self.history[epoch_type]["loss"].append(epoch_total_loss)
@@ -783,299 +783,299 @@ class Trainer:
                     # )
         
         
-        if self.progress_plots and epoch_type == "val":
-            if (epoch + 1) % self.progress_plots_freq == 0:
+        # if self.progress_plots and epoch_type == "val":
+        #     if (epoch + 1) % self.progress_plots_freq == 0:
                 
-                if self.max_examples > 1:
-                    sample_add = 1
-                else:
-                    sample_add = 0
-                if self.synth_dataset:
-                    if self.show_int_mod_maps:
-                        fig, ax = plt.subplots(self.max_examples + sample_add, 8, figsize=(24, 3 * self.max_examples + sample_add * 3))
-                        idx_multiplier = 8
-                    else:
-                        fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
-                        idx_multiplier = 6
-                else:
-                    if past_results[0]["cond_temp_unbiased"] is not None:
-                        if self.show_int_mod_maps:
-                            fig, ax = plt.subplots(self.max_examples + sample_add, 9, figsize=(27, 3 * self.max_examples + sample_add * 3))
-                            idx_multiplier = 9
-                        else:
-                            fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
-                            idx_multiplier = 6
-                    else:
-                        if self.show_int_mod_maps:
-                            fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
-                            idx_multiplier = 6
-                        else:
-                            fig, ax = plt.subplots(self.max_examples + sample_add, 4, figsize=(12, 3 * self.max_examples + sample_add * 3))
-                            idx_multiplier = 4
+        #         if self.max_examples > 1:
+        #             sample_add = 1
+        #         else:
+        #             sample_add = 0
+        #         if self.synth_dataset:
+        #             if self.show_int_mod_maps:
+        #                 fig, ax = plt.subplots(self.max_examples + sample_add, 8, figsize=(24, 3 * self.max_examples + sample_add * 3))
+        #                 idx_multiplier = 8
+        #             else:
+        #                 fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
+        #                 idx_multiplier = 6
+        #         else:
+        #             if past_results[0]["cond_temp_unbiased"] is not None:
+        #                 if self.show_int_mod_maps:
+        #                     fig, ax = plt.subplots(self.max_examples + sample_add, 9, figsize=(27, 3 * self.max_examples + sample_add * 3))
+        #                     idx_multiplier = 9
+        #                 else:
+        #                     fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
+        #                     idx_multiplier = 6
+        #             else:
+        #                 if self.show_int_mod_maps:
+        #                     fig, ax = plt.subplots(self.max_examples + sample_add, 6, figsize=(18, 3 * self.max_examples + sample_add * 3))
+        #                     idx_multiplier = 6
+        #                 else:
+        #                     fig, ax = plt.subplots(self.max_examples + sample_add, 4, figsize=(12, 3 * self.max_examples + sample_add * 3))
+        #                     idx_multiplier = 4
 
 
-                if not self.synth_dataset:
-                    _img_slice = int(self.img_dims[0] * 0.55)
+        #         if not self.synth_dataset:
+        #             _img_slice = int(self.img_dims[0] * 0.55)
 
                 
-                # if self.synth_dataset:
-                #     import cv2
+        #         # if self.synth_dataset:
+        #         #     import cv2
 
-                for idx in range(self.max_examples + sample_add):
-                    itr = 0
+        #         for idx in range(self.max_examples + sample_add):
+        #             itr = 0
                     
-                    if self.show_int_mod_maps:
-                        if idx < self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["intensity_mod_1"][0] if self.synth_dataset else np.rot90(past_results[idx]["intensity_mod_1"][0][:, :, _img_slice]), vmin = 0, vmax = 2, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Intensity mod 1", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        elif idx == self.max_examples:
-                            if self.synth_dataset:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["intensity_mod_1"][0] - past_results[idx - 1]["intensity_mod_1"][0], vmin = 0, vmax = 2, cmap = "seismic")
-                            else:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["intensity_mod_1"][0][:, :, _img_slice] - past_results[idx - 1]["intensity_mod_1"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff intensity mod 1", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if self.show_int_mod_maps:
+        #                 if idx < self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["intensity_mod_1"][0] if self.synth_dataset else np.rot90(past_results[idx]["intensity_mod_1"][0][:, :, _img_slice]), vmin = 0, vmax = 2, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Intensity mod 1", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     if self.synth_dataset:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["intensity_mod_1"][0] - past_results[idx - 1]["intensity_mod_1"][0], vmin = 0, vmax = 2, cmap = "seismic")
+        #                     else:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["intensity_mod_1"][0][:, :, _img_slice] - past_results[idx - 1]["intensity_mod_1"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff intensity mod 1", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
-                    if past_results[0]["cond_temp_unbiased"] is not None:
-                        if idx < self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["cond_temp"][0][:, :, _img_slice]), vmin = 0, vmax = 1, cmap = "bone")
-                            if self.use_age_buckets:
-                                _param_orig = past_results[idx]["params_orig"]
-                                _param = past_results[idx]["params"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param_orig:.1f}, bkt {_param}", fontsize = 8)
-                            else:
-                                _param = past_results[idx]["params_orig"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param:.1f}", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                            #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
-                            #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
-                            #ax[idx, 0].axis("off")
-                        elif idx == self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Difference CT", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if past_results[0]["cond_temp_unbiased"] is not None:
+        #                 if idx < self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["cond_temp"][0][:, :, _img_slice]), vmin = 0, vmax = 1, cmap = "bone")
+        #                     if self.use_age_buckets:
+        #                         _param_orig = past_results[idx]["params_orig"]
+        #                         _param = past_results[idx]["params"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param_orig:.1f}, bkt {_param}", fontsize = 8)
+        #                     else:
+        #                         _param = past_results[idx]["params_orig"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param:.1f}", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                     #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
+        #                     #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
+        #                     #ax[idx, 0].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Difference CT", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
-                    if idx < self.max_examples:
-                        if past_results[0]["cond_temp_unbiased"] is not None:
+        #             if idx < self.max_examples:
+        #                 if past_results[0]["cond_temp_unbiased"] is not None:
 
                         
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["cond_temp"][0] if self.synth_dataset else np.rot90(past_results[idx]["cond_temp_pre_int_mod"][0][:, :, _img_slice]), cmap = "bone")
-                            if self.use_age_buckets:
-                                _param_orig = past_results[idx]["params_orig"]
-                                _param = past_results[idx]["params"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT pre int {_param_orig:.1f}, bkt {_param}", fontsize = 8)
-                            else:
-                                _param = past_results[idx]["params_orig"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT pre int {_param:.1f}", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        else:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["cond_temp"][0] if self.synth_dataset else np.rot90(past_results[idx]["cond_temp"][0][:, :, _img_slice]), cmap = "bone")
-                            if self.use_age_buckets:
-                                _param_orig = past_results[idx]["params_orig"]
-                                _param = past_results[idx]["params"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param_orig:.1f}, bkt {_param}", fontsize = 8)
-                            else:
-                                _param = past_results[idx]["params_orig"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param:.1f}", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["cond_temp"][0] if self.synth_dataset else np.rot90(past_results[idx]["cond_temp_pre_int_mod"][0][:, :, _img_slice]), cmap = "bone")
+        #                     if self.use_age_buckets:
+        #                         _param_orig = past_results[idx]["params_orig"]
+        #                         _param = past_results[idx]["params"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT pre int {_param_orig:.1f}, bkt {_param}", fontsize = 8)
+        #                     else:
+        #                         _param = past_results[idx]["params_orig"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT pre int {_param:.1f}", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 else:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["cond_temp"][0] if self.synth_dataset else np.rot90(past_results[idx]["cond_temp"][0][:, :, _img_slice]), cmap = "bone")
+        #                     if self.use_age_buckets:
+        #                         _param_orig = past_results[idx]["params_orig"]
+        #                         _param = past_results[idx]["params"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param_orig:.1f}, bkt {_param}", fontsize = 8)
+        #                     else:
+        #                         _param = past_results[idx]["params_orig"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"Predicted CT {_param:.1f}", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
                     
                     
-                    elif idx == self.max_examples:
-                        if self.synth_dataset:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["cond_temp"][0] - past_results[idx - 1]["cond_temp"][0], vmin = -1, vmax = 1, cmap = "seismic")
-                        else:
-                            if past_results[0]["cond_temp_unbiased"] is not None:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_pre_int_mod"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            else:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                        if past_results[0]["cond_temp_unbiased"] is not None:
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT pre int", fontsize = 8)
-                        else:
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Difference CT", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    itr += 1 
+        #             elif idx == self.max_examples:
+        #                 if self.synth_dataset:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["cond_temp"][0] - past_results[idx - 1]["cond_temp"][0], vmin = -1, vmax = 1, cmap = "seismic")
+        #                 else:
+        #                     if past_results[0]["cond_temp_unbiased"] is not None:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_pre_int_mod"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     else:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                 if past_results[0]["cond_temp_unbiased"] is not None:
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT pre int", fontsize = 8)
+        #                 else:
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Difference CT", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             itr += 1 
 
-                    if past_results[0]["cond_temp_unbiased"] is not None:
-                        if idx < self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["cond_temp_unbiased"][0][:, :, _img_slice]), vmin = 0, vmax = 1, cmap = "bone")
-                            if self.use_age_buckets:
-                                _param_orig = past_results[idx]["params_orig"]
-                                _param = past_results[idx]["params"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT unbiased {_param_orig:.1f}, bkt {_param}", fontsize = 8)
-                            else:
-                                _param = past_results[idx]["params_orig"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT unbiased {_param:.1f}", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                            #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
-                            #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
-                            #ax[idx, 0].axis("off")
-                        elif idx == self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp_unbiased"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_unbiased"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT unbiased", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if past_results[0]["cond_temp_unbiased"] is not None:
+        #                 if idx < self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["cond_temp_unbiased"][0][:, :, _img_slice]), vmin = 0, vmax = 1, cmap = "bone")
+        #                     if self.use_age_buckets:
+        #                         _param_orig = past_results[idx]["params_orig"]
+        #                         _param = past_results[idx]["params"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT unbiased {_param_orig:.1f}, bkt {_param}", fontsize = 8)
+        #                     else:
+        #                         _param = past_results[idx]["params_orig"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT unbiased {_param:.1f}", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                     #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
+        #                     #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
+        #                     #ax[idx, 0].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["cond_temp_unbiased"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_unbiased"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT unbiased", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
-                    if past_results[0]["cond_temp_unbiased"] is not None:
-                        if idx < self.max_examples:
-                            _cond_temp_diff = np.rot90(past_results[idx]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx]["cond_temp_unbiased"][0][:, :, _img_slice])
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff, vmin = -1, vmax = 1, cmap = "seismic")
-                            if self.use_age_buckets:
-                                _param_orig = past_results[idx]["params_orig"]
-                                _param = past_results[idx]["params"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT pre int - CT unbiased", fontsize = 8)
-                            else:
-                                _param = past_results[idx]["params_orig"]
-                                ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT pre int - CT unbiased", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                            #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
-                            #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
-                            #ax[idx, 0].axis("off")
-                        elif idx == self.max_examples:
-                            _cond_temp_diff_1 = np.rot90(past_results[idx - 2]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 2]["cond_temp_unbiased"][0][:, :, _img_slice])
-                            _cond_temp_diff_2 = np.rot90(past_results[idx - 1]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_unbiased"][0][:, :, _img_slice])
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff_1 - _cond_temp_diff_2, vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT pre int - CT unbiased", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if past_results[0]["cond_temp_unbiased"] is not None:
+        #                 if idx < self.max_examples:
+        #                     _cond_temp_diff = np.rot90(past_results[idx]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx]["cond_temp_unbiased"][0][:, :, _img_slice])
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff, vmin = -1, vmax = 1, cmap = "seismic")
+        #                     if self.use_age_buckets:
+        #                         _param_orig = past_results[idx]["params_orig"]
+        #                         _param = past_results[idx]["params"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT pre int - CT unbiased", fontsize = 8)
+        #                     else:
+        #                         _param = past_results[idx]["params_orig"]
+        #                         ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT pre int - CT unbiased", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                     #ax[idx, 0].imshow(cond_temp_view[idx, 0, :, :] if synth_dataset else cond_temp_view[idx, 0, _img_slice, :, :])
+        #                     #ax[idx, 0].set_title(f"Predicted CT {int(params_view[idx])}")
+        #                     #ax[idx, 0].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     _cond_temp_diff_1 = np.rot90(past_results[idx - 2]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 2]["cond_temp_unbiased"][0][:, :, _img_slice])
+        #                     _cond_temp_diff_2 = np.rot90(past_results[idx - 1]["cond_temp_pre_int_mod"][0][:, :, _img_slice] - past_results[idx - 1]["cond_temp_unbiased"][0][:, :, _img_slice])
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff_1 - _cond_temp_diff_2, vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT pre int - CT unbiased", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
 
                     
-                    if self.synth_dataset:
-                        if idx < self.max_examples:
-                            _param = past_results[idx]["params_orig"]
-                            _cond_temp_target = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param)}.npy") / 255
-                            # _cond_temp_target = cv2.resize(_cond_temp_target, self.img_dims, interpolation = cv2.INTER_LINEAR)
-                            _cond_temp_target = skimage.transform.resize(_cond_temp_target, self.img_dims, order = 1, mode = "edge", preserve_range = True)
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_target, cmap = "bone", vmin = 0, vmax = 1)
-                            ax.flatten()[idx * idx_multiplier + itr].set_title(f"Actual CT {_param:.1f}", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        elif idx == self.max_examples:
-                            _param_1 = past_results[idx - 2]["params_orig"]
-                            _param_2 = past_results[idx - 1]["params_orig"]
-                            _cond_temp_target_1 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_1)}.npy") / 255
-                            _cond_temp_target_2 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_2)}.npy") / 255
-                            # _cond_temp_target_1 = cv2.resize(_cond_temp_target_1, self.img_dims, interpolation = cv2.INTER_LINEAR)
-                            # _cond_temp_target_2 = cv2.resize(_cond_temp_target_2, self.img_dims, interpolation = cv2.INTER_LINEAR)
-                            _cond_temp_target_1 = skimage.transform.resize(_cond_temp_target_1, self.img_dims, order = 1, mode = "edge", preserve_range = True)
-                            _cond_temp_target_2 = skimage.transform.resize(_cond_temp_target_2, self.img_dims, order = 1, mode = "edge", preserve_range = True)
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_target_1 - _cond_temp_target_2, vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Difference act CT", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if self.synth_dataset:
+        #                 if idx < self.max_examples:
+        #                     _param = past_results[idx]["params_orig"]
+        #                     _cond_temp_target = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param)}.npy") / 255
+        #                     # _cond_temp_target = cv2.resize(_cond_temp_target, self.img_dims, interpolation = cv2.INTER_LINEAR)
+        #                     _cond_temp_target = skimage.transform.resize(_cond_temp_target, self.img_dims, order = 1, mode = "edge", preserve_range = True)
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_target, cmap = "bone", vmin = 0, vmax = 1)
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title(f"Actual CT {_param:.1f}", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     _param_1 = past_results[idx - 2]["params_orig"]
+        #                     _param_2 = past_results[idx - 1]["params_orig"]
+        #                     _cond_temp_target_1 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_1)}.npy") / 255
+        #                     _cond_temp_target_2 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_2)}.npy") / 255
+        #                     # _cond_temp_target_1 = cv2.resize(_cond_temp_target_1, self.img_dims, interpolation = cv2.INTER_LINEAR)
+        #                     # _cond_temp_target_2 = cv2.resize(_cond_temp_target_2, self.img_dims, interpolation = cv2.INTER_LINEAR)
+        #                     _cond_temp_target_1 = skimage.transform.resize(_cond_temp_target_1, self.img_dims, order = 1, mode = "edge", preserve_range = True)
+        #                     _cond_temp_target_2 = skimage.transform.resize(_cond_temp_target_2, self.img_dims, order = 1, mode = "edge", preserve_range = True)
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_target_1 - _cond_temp_target_2, vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Difference act CT", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
-                    #ax[idx, 1].imshow(_cond_temp_target)
-                    #ax[idx, 1].set_title(f"Actual CT {params_view[idx]}")
-                    #ax[idx, 1].axis("off")
+        #             #ax[idx, 1].imshow(_cond_temp_target)
+        #             #ax[idx, 1].set_title(f"Actual CT {params_view[idx]}")
+        #             #ax[idx, 1].axis("off")
 
-                    if self.synth_dataset:
-                        if idx < self.max_examples:
-                            #print(len(past_results[idx]))
-                            _cond_temp_diff = past_results[idx]["cond_temp"][0] - _cond_temp_target
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff, vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT diff", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        elif idx == self.max_examples:
-                            _param_1 = past_results[idx - 2]["params_orig"]
-                            _param_2 = past_results[idx - 1]["params_orig"]
-                            _cond_temp_target_1 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_1)}.npy") / 255
-                            _cond_temp_target_2 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_2)}.npy") / 255
-                            # _cond_temp_target_1 = cv2.resize(_cond_temp_target_1, self.img_dims, interpolation = cv2.INTER_LINEAR)
-                            # _cond_temp_target_2 = cv2.resize(_cond_temp_target_2, self.img_dims, interpolation = cv2.INTER_LINEAR)
-                            _cond_temp_target_1 = skimage.transform.resize(_cond_temp_target_1, self.img_dims, order = 1, mode = "edge", preserve_range = True)
-                            _cond_temp_target_2 = skimage.transform.resize(_cond_temp_target_2, self.img_dims, order = 1, mode = "edge", preserve_range = True)
-                            _cond_temp_diff_1 = past_results[idx - 2]["cond_temp"][0] - _cond_temp_target_1
-                            _cond_temp_diff_2 = past_results[idx - 1]["cond_temp"][0] - _cond_temp_target_2
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff_1 - _cond_temp_diff_2, vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT diff", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if self.synth_dataset:
+        #                 if idx < self.max_examples:
+        #                     #print(len(past_results[idx]))
+        #                     _cond_temp_diff = past_results[idx]["cond_temp"][0] - _cond_temp_target
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff, vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title(f"CT diff", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     _param_1 = past_results[idx - 2]["params_orig"]
+        #                     _param_2 = past_results[idx - 1]["params_orig"]
+        #                     _cond_temp_target_1 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_1)}.npy") / 255
+        #                     _cond_temp_target_2 = np.load(f"{self.runtime_dir}/cond_templates_el_2/template_el_{int(_param_2)}.npy") / 255
+        #                     # _cond_temp_target_1 = cv2.resize(_cond_temp_target_1, self.img_dims, interpolation = cv2.INTER_LINEAR)
+        #                     # _cond_temp_target_2 = cv2.resize(_cond_temp_target_2, self.img_dims, interpolation = cv2.INTER_LINEAR)
+        #                     _cond_temp_target_1 = skimage.transform.resize(_cond_temp_target_1, self.img_dims, order = 1, mode = "edge", preserve_range = True)
+        #                     _cond_temp_target_2 = skimage.transform.resize(_cond_temp_target_2, self.img_dims, order = 1, mode = "edge", preserve_range = True)
+        #                     _cond_temp_diff_1 = past_results[idx - 2]["cond_temp"][0] - _cond_temp_target_1
+        #                     _cond_temp_diff_2 = past_results[idx - 1]["cond_temp"][0] - _cond_temp_target_2
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_cond_temp_diff_1 - _cond_temp_diff_2, vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff CT diff", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
-                    if self.show_int_mod_maps:
-                        if idx < self.max_examples:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["intensity_mod_2"][0] if self.synth_dataset else np.rot90(past_results[idx]["intensity_mod_2"][0][:, :, _img_slice]), vmin = 0, vmax = 2, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Intensity mod 2", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        elif idx == self.max_examples:
-                            if self.synth_dataset:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["intensity_mod_2"][0] - past_results[idx - 1]["intensity_mod_2"][0], vmin = 0, vmax = 2, cmap = "seismic")
-                            else:
-                                ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["intensity_mod_2"][0][:, :, _img_slice] - past_results[idx - 1]["intensity_mod_2"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            ax.flatten()[idx * idx_multiplier + itr].set_title("Diff intensity mod 2", fontsize = 8)
-                            ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                        itr += 1
+        #             if self.show_int_mod_maps:
+        #                 if idx < self.max_examples:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["intensity_mod_2"][0] if self.synth_dataset else np.rot90(past_results[idx]["intensity_mod_2"][0][:, :, _img_slice]), vmin = 0, vmax = 2, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Intensity mod 2", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 elif idx == self.max_examples:
+        #                     if self.synth_dataset:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["intensity_mod_2"][0] - past_results[idx - 1]["intensity_mod_2"][0], vmin = 0, vmax = 2, cmap = "seismic")
+        #                     else:
+        #                         ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["intensity_mod_2"][0][:, :, _img_slice] - past_results[idx - 1]["intensity_mod_2"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     ax.flatten()[idx * idx_multiplier + itr].set_title("Diff intensity mod 2", fontsize = 8)
+        #                     ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #                 itr += 1
                     
                     
-                    if idx < self.max_examples:
-                        ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["pred_sample"][0] if self.synth_dataset else np.rot90(past_results[idx]["pred_sample"][0][:, :, _img_slice]), cmap = "bone")
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Predicted", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    elif idx == self.max_examples:
-                        if self.synth_dataset:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["pred_sample"][0] - past_results[idx - 1]["pred_sample"][0], vmin = -1, vmax = 1, cmap = "seismic")
-                        else:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 1]["pred_sample"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Difference pred", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    itr += 1
+        #             if idx < self.max_examples:
+        #                 ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["pred_sample"][0] if self.synth_dataset else np.rot90(past_results[idx]["pred_sample"][0][:, :, _img_slice]), cmap = "bone")
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Predicted", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             elif idx == self.max_examples:
+        #                 if self.synth_dataset:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["pred_sample"][0] - past_results[idx - 1]["pred_sample"][0], vmin = -1, vmax = 1, cmap = "seismic")
+        #                 else:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 1]["pred_sample"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Difference pred", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             itr += 1
 
-                    #ax[idx, 3].imshow(pred_view[idx, 0, :, :] if synth_dataset else pred_view[idx, 0, _img_slice, :, :])
-                    #ax[idx, 3].set_title("Predicted")
-                    #ax[idx, 3].axis("off")
+        #             #ax[idx, 3].imshow(pred_view[idx, 0, :, :] if synth_dataset else pred_view[idx, 0, _img_slice, :, :])
+        #             #ax[idx, 3].set_title("Predicted")
+        #             #ax[idx, 3].axis("off")
                     
-                    if idx < self.max_examples:
-                        ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["image"][0] if self.synth_dataset else np.rot90(past_results[idx]["image"][0][:, :, _img_slice]), cmap = "bone")
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Sample", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    elif idx == self.max_examples:
-                        if self.synth_dataset:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["image"][0] - past_results[idx - 1]["image"][0], vmin = -1, vmax = 1, cmap = "seismic")
-                        else:   
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["image"][0][:, :, _img_slice] - past_results[idx - 1]["image"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Difference sample", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    itr += 1
+        #             if idx < self.max_examples:
+        #                 ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["image"][0] if self.synth_dataset else np.rot90(past_results[idx]["image"][0][:, :, _img_slice]), cmap = "bone")
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Sample", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             elif idx == self.max_examples:
+        #                 if self.synth_dataset:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx - 2]["image"][0] - past_results[idx - 1]["image"][0], vmin = -1, vmax = 1, cmap = "seismic")
+        #                 else:   
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx - 2]["image"][0][:, :, _img_slice] - past_results[idx - 1]["image"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Difference sample", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             itr += 1
 
-                    # ax[idx, 4].imshow(image_view[idx, 0, :, :] if synth_dataset else image_view[idx, 0, _img_slice, :, :])
-                    # ax[idx, 4].set_title("Sample")
-                    # ax[idx, 4].axis("off")
+        #             # ax[idx, 4].imshow(image_view[idx, 0, :, :] if synth_dataset else image_view[idx, 0, _img_slice, :, :])
+        #             # ax[idx, 4].set_title("Sample")
+        #             # ax[idx, 4].axis("off")
                     
-                    if idx < self.max_examples:
-                        if self.synth_dataset:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["pred_sample"][0] - past_results[idx]["image"][0], vmin = -1, vmax = 1, cmap = "seismic")
-                            #ax[idx, 5].imshow(pred_view[idx, 0, :, :] - image_view[idx, 0, :, :], vmin = -1, vmax = 1)
-                        else:
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["pred_sample"][0][:, :, _img_slice] - past_results[idx]["image"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
-                            #ax[idx, 5].imshow(pred_view[idx, 0, _img_slice, :, :] - image_view[idx, 0, _img_slice, :, :], vmin = -1, vmax = 1)
-                        #ax[idx, 5].imshow(pred_view[idx, 0, :, :] - image_view[idx, 0, :, :], vmin = -1, vmax = 1)
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Difference", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
-                    elif idx == self.max_examples:
-                        if self.synth_dataset:
-                            _diff_1 = past_results[idx - 2]["pred_sample"][0] - past_results[idx - 2]["image"][0]
-                            _diff_2 = past_results[idx - 1]["pred_sample"][0] - past_results[idx - 1]["image"][0]
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_diff_1 - _diff_2, vmin = -1, vmax = 1, cmap = "seismic")
-                        else:
-                            _diff_1 = np.rot90(past_results[idx - 2]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 2]["image"][0][:, :, _img_slice])
-                            _diff_2 = np.rot90(past_results[idx - 1]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 1]["image"][0][:, :, _img_slice])
-                            ax.flatten()[idx * idx_multiplier + itr].imshow(_diff_1 - _diff_2, vmin = -1, vmax = 1, cmap = "seismic")
-                        ax.flatten()[idx * idx_multiplier + itr].set_title("Difference difference", fontsize = 8)
-                        ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             if idx < self.max_examples:
+        #                 if self.synth_dataset:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(past_results[idx]["pred_sample"][0] - past_results[idx]["image"][0], vmin = -1, vmax = 1, cmap = "seismic")
+        #                     #ax[idx, 5].imshow(pred_view[idx, 0, :, :] - image_view[idx, 0, :, :], vmin = -1, vmax = 1)
+        #                 else:
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(np.rot90(past_results[idx]["pred_sample"][0][:, :, _img_slice] - past_results[idx]["image"][0][:, :, _img_slice]), vmin = -1, vmax = 1, cmap = "seismic")
+        #                     #ax[idx, 5].imshow(pred_view[idx, 0, _img_slice, :, :] - image_view[idx, 0, _img_slice, :, :], vmin = -1, vmax = 1)
+        #                 #ax[idx, 5].imshow(pred_view[idx, 0, :, :] - image_view[idx, 0, :, :], vmin = -1, vmax = 1)
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Difference", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
+        #             elif idx == self.max_examples:
+        #                 if self.synth_dataset:
+        #                     _diff_1 = past_results[idx - 2]["pred_sample"][0] - past_results[idx - 2]["image"][0]
+        #                     _diff_2 = past_results[idx - 1]["pred_sample"][0] - past_results[idx - 1]["image"][0]
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_diff_1 - _diff_2, vmin = -1, vmax = 1, cmap = "seismic")
+        #                 else:
+        #                     _diff_1 = np.rot90(past_results[idx - 2]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 2]["image"][0][:, :, _img_slice])
+        #                     _diff_2 = np.rot90(past_results[idx - 1]["pred_sample"][0][:, :, _img_slice] - past_results[idx - 1]["image"][0][:, :, _img_slice])
+        #                     ax.flatten()[idx * idx_multiplier + itr].imshow(_diff_1 - _diff_2, vmin = -1, vmax = 1, cmap = "seismic")
+        #                 ax.flatten()[idx * idx_multiplier + itr].set_title("Difference difference", fontsize = 8)
+        #                 ax.flatten()[idx * idx_multiplier + itr].axis("off")
                             
-                if not self.synth_dataset and self.show_plots:
-                    scan_paths = []
-                    for idx in range(len(past_results)):
-                        scan_paths.append(past_results[idx]["scan_path"])
-                    print(f"Scan paths for examples shown:\n{scan_paths}")
+        #         if not self.synth_dataset and self.show_plots:
+        #             scan_paths = []
+        #             for idx in range(len(past_results)):
+        #                 scan_paths.append(past_results[idx]["scan_path"])
+        #             print(f"Scan paths for examples shown:\n{scan_paths}")
 
-                plt.tight_layout()                
-                if self.run_monitor_args is not None:
-                    plt.savefig(f"{self.runtime_dir}/../results/{self.run_monitor_args['id']}/plots/epoch_{epoch + 1}.png")
-                # if self.training_location != "phoenix":
-                #     if self.show_plots and (epoch + 1) % self.show_plots_freq == 0:
-                #         plt.show()
-                plt.close()
+        #         plt.tight_layout()                
+        #         if self.run_monitor_args is not None:
+        #             plt.savefig(f"{self.runtime_dir}/../results/{self.run_monitor_args['id']}/plots/epoch_{epoch + 1}.png")
+        #         # if self.training_location != "phoenix":
+        #         #     if self.show_plots and (epoch + 1) % self.show_plots_freq == 0:
+        #         #         plt.show()
+        #         plt.close()
 
                 # if self.intensity_field_multiplier != 0:
                 #     print(f"\nIntensity field stats for this {epoch_type} epoch {epoch + 1}:")
@@ -1153,11 +1153,11 @@ class Trainer:
                 (curr_batch_size, 1, *dim_tile),
             ).float().to(self.device)
             
-            if self.template_seg is not None:
-                template_seg_tensor = torch.tile(
-                    self.template_seg, 
-                    (curr_batch_size, 1, *dim_tile),
-                ).float().to(self.device)
+            # if self.template_seg is not None:
+            #     template_seg_tensor = torch.tile(
+            #         self.template_seg, 
+            #         (curr_batch_size, 1, *dim_tile),
+            #     ).float().to(self.device)
             
             params_orig = batch["param_orig"]
             zeros = torch.Tensor([0.]).to(self.device)
@@ -1180,7 +1180,7 @@ class Trainer:
                 idx_0,
                 means_idx_0,
                 prop_means_idx_0,
-                template_seg_tensor = template_seg_tensor if self.template_seg is not None else None,
+                # template_seg_tensor = template_seg_tensor if self.template_seg is not None else None,
             )
 
             epoch_loss.append(lost_list)
@@ -1223,65 +1223,65 @@ class Trainer:
 
 
 
-            if epoch_type == "val":
-                if len_dataloader - idx_0 <= self.max_examples:
-                    if self.synth_dataset:
-                        past_results.append(
-                            {
-                                "params": params[0].detach().cpu().numpy(),
-                                "params_orig": params_orig[0],
-                                "pred_sample": pred[0][0].detach().cpu().numpy(),
-                                "image": images[0].detach().cpu().numpy(),
-                                "stage_2_warp": pred[2][0].detach().cpu().numpy(),
-                                "cond_temp" : pred[7][0].detach().cpu().numpy(),
-                                "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
-                                "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
-                                "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
-                            }
-                        )
-                    else:
-                        if self.zero_mean_cons:
-                            past_results.append(
-                                {
-                                    # "scan_id": scan_id[0],
-                                    "scan_path": scan_path[0],
-                                    "params": params[0].detach().cpu().numpy(),
-                                    "params_orig": params_orig[0],
-                                    "pred_sample": pred[0][0].detach().cpu().numpy(),
-                                    "image": images[0].detach().cpu().numpy(),
-                                    "stage_2_warp": pred[2][0].detach().cpu().numpy(),
-                                    "cond_temp" : pred[7][0].detach().cpu().numpy(),
-                                    "cond_temp_pre_int_mod" : pred[5][0].detach().cpu().numpy(),
-                                    "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
-                                    "cond_temp_unbiased" : pred[8][0].detach().cpu().numpy() if pred[6] is not None else None,
-                                    "geometry" : geometry[0],
-                                    "orientation" : orientation[0],
-                                    "vox_size" : vox_size[0],
-                                    "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
-                                    "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
-                                }
-                            )
+            # if epoch_type == "val":
+            #     if len_dataloader - idx_0 <= self.max_examples:
+            #         if self.synth_dataset:
+            #             past_results.append(
+            #                 {
+            #                     "params": params[0].detach().cpu().numpy(),
+            #                     "params_orig": params_orig[0],
+            #                     "pred_sample": pred[0][0].detach().cpu().numpy(),
+            #                     "image": images[0].detach().cpu().numpy(),
+            #                     "stage_2_warp": pred[2][0].detach().cpu().numpy(),
+            #                     "cond_temp" : pred[7][0].detach().cpu().numpy(),
+            #                     "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
+            #                     "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
+            #                     "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
+            #                 }
+            #             )
+            #         else:
+            #             if self.zero_mean_cons:
+            #                 past_results.append(
+            #                     {
+            #                         # "scan_id": scan_id[0],
+            #                         "scan_path": scan_path[0],
+            #                         "params": params[0].detach().cpu().numpy(),
+            #                         "params_orig": params_orig[0],
+            #                         "pred_sample": pred[0][0].detach().cpu().numpy(),
+            #                         "image": images[0].detach().cpu().numpy(),
+            #                         "stage_2_warp": pred[2][0].detach().cpu().numpy(),
+            #                         "cond_temp" : pred[7][0].detach().cpu().numpy(),
+            #                         "cond_temp_pre_int_mod" : pred[5][0].detach().cpu().numpy(),
+            #                         "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
+            #                         "cond_temp_unbiased" : pred[8][0].detach().cpu().numpy() if pred[6] is not None else None,
+            #                         "geometry" : geometry[0],
+            #                         "orientation" : orientation[0],
+            #                         "vox_size" : vox_size[0],
+            #                         "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
+            #                         "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
+            #                     }
+            #                 )
 
-                        else:
-                            past_results.append(
-                                {
-                                    # "scan_id": scan_id[0],
-                                    "scan_path": scan_path[0],
-                                    "params": params[0].detach().cpu().numpy(),
-                                    "params_orig": params_orig[0],
-                                    "pred_sample": pred[0][0].detach().cpu().numpy(),
-                                    "image": images[0].detach().cpu().numpy(),
-                                    "stage_2_warp": pred[2][0].detach().cpu().numpy(),
-                                    "cond_temp" : pred[7][0].detach().cpu().numpy(),
-                                    "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
-                                    "cond_temp_unbiased" : None,
-                                    "geometry" : geometry[0],
-                                    "orientation" : orientation[0],
-                                    "vox_size" : vox_size[0],
-                                    "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
-                                    "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
-                                }
-                            )
+            #             else:
+            #                 past_results.append(
+            #                     {
+            #                         # "scan_id": scan_id[0],
+            #                         "scan_path": scan_path[0],
+            #                         "params": params[0].detach().cpu().numpy(),
+            #                         "params_orig": params_orig[0],
+            #                         "pred_sample": pred[0][0].detach().cpu().numpy(),
+            #                         "image": images[0].detach().cpu().numpy(),
+            #                         "stage_2_warp": pred[2][0].detach().cpu().numpy(),
+            #                         "cond_temp" : pred[7][0].detach().cpu().numpy(),
+            #                         "cond_temp_warp" : pred[1][0].detach().cpu().numpy(),
+            #                         "cond_temp_unbiased" : None,
+            #                         "geometry" : geometry[0],
+            #                         "orientation" : orientation[0],
+            #                         "vox_size" : vox_size[0],
+            #                         "intensity_mod_1" : pred[-2][0].detach().cpu().numpy(),
+            #                         "intensity_mod_2" : pred[-1][0].detach().cpu().numpy(),
+            #                     }
+            #                 )
 
         int_dict = {
             "int_1_max": int_1_max,
@@ -1292,14 +1292,14 @@ class Trainer:
             "int_2_mean": int_2_mean,
         }
 
-        # save past results if flag selected
-        if epoch_type == "val" and self.save_plot_data and not self.synth_dataset:
-            with open(os.path.join(self.dir_path_plots_data, f"plots_results_epoch_{epoch + 1}.pkl"), "wb") as f:
-                pickle.dump(past_results, f)
+        # # save past results if flag selected
+        # if epoch_type == "val" and self.save_plot_data and not self.synth_dataset:
+        #     with open(os.path.join(self.dir_path_plots_data, f"plots_results_epoch_{epoch + 1}.pkl"), "wb") as f:
+        #         pickle.dump(past_results, f)
                 
         images = None
         template_tensor = None
-        template_seg_tensor = None
+        # template_seg_tensor = None
         params = None
         means_idx_0 = None
         prop_means_idx_0 = None
@@ -1308,21 +1308,21 @@ class Trainer:
         epoch_total_loss = np.mean(epoch_total_loss)
         mean_epoch_loss = np.mean(epoch_loss, axis = 0)
 
-        if epoch_type == "val" and self.progress_plots:
-            if (epoch + 1) % self.progress_plots_freq == 0:
-                return (
-                    epoch_total_loss, 
-                    mean_epoch_loss, 
-                    int_dict, 
-                    past_results,
-                )
+        # if epoch_type == "val" and self.progress_plots:
+        #     if (epoch + 1) % self.progress_plots_freq == 0:
+        #         return (
+        #             epoch_total_loss, 
+        #             mean_epoch_loss, 
+        #             int_dict, 
+        #             past_results,
+        #         )
 
-        else:
-            return (
-                epoch_total_loss, 
-                mean_epoch_loss, 
-                int_dict, 
-            )
+        # else:
+        return (
+            epoch_total_loss, 
+            mean_epoch_loss, 
+            int_dict, 
+        )
     
     def _network_execute(
         self,

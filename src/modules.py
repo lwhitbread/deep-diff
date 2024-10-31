@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 from torch.distributions.normal import Normal
 import numbers
-from typing import List, Tuple, Dict, Union, Optional, Callable, Iterable
+from typing import List, Tuple, Union, Iterable
 
 
 # sys.path.append("../")

@@ -20,7 +20,7 @@ The configuration file `config.txt` contains a list of hyperparameters for the n
 Training and validation data should be linearly registered to a common reference space. To do this, we recommend registering the data to the unconditional template using ANTs (http://stnava.github.io/ANTs/). 
 
 ## Training
-To train a purely geometric conditional brain template construction network, run the following command from ./sh, ensuring that `train.sh` is executable (run `chmod +x train.sh` if not):
+To train a purely geometric conditional brain template construction network, run the following command from `./sh`, ensuring that `train.sh` is executable (run `chmod +x train.sh` if not):
 ```bash
 ./train.sh -c config.txt -i <run_id> -d <cuda_device_no> -u True 
 ```

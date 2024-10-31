@@ -4,11 +4,8 @@ import torch
 import pandas as pd
 import torch.utils.data as data 
 import surfa as sf
-import skimage
-from typing import Tuple, List, Dict, Any, Union, Optional, Iterable
+# from typing import Tuple, List, Dict, Any, Union, Optional, Iterable
 import shutil
-import pickle as pkl
-import nibabel as nib
 
 # class SynthDataset(data.Dataset):
 #     """
@@ -95,40 +92,40 @@ class CondWarpDataset(data.Dataset):
         self.dataset_root = dataset_root
         self.volume_args = volume_args
 
-        self.marital_status_dict = {
-            "Married": 0, 
-            "Widowed": 1, 
-            "Divorced": 2, 
-            "Never married": 3,
-            "Unknown": 4,
-        }
-        self.ethnicity_dict = {
-            "Not Hisp/Latino": 0,
-            "Hisp/Latino": 1,
-        }
-        self.race_dict = {
-            "White": 0,
-            "Black": 1,
-            "Asian": 2,
-            "More than one": 3,
-            "Unknown": 4,
-            "Am Indian/Alaskan": 5,
-        }
-        self.diag_dict = {
-            "CN": 0,
-            "MCI": 1,
-            "AD": 2,
-        }
-        self.sex_dict = {
-            "M": 0,
-            "F": 1,
-        }
+        # self.marital_status_dict = {
+        #     "Married": 0, 
+        #     "Widowed": 1, 
+        #     "Divorced": 2, 
+        #     "Never married": 3,
+        #     "Unknown": 4,
+        # }
+        # self.ethnicity_dict = {
+        #     "Not Hisp/Latino": 0,
+        #     "Hisp/Latino": 1,
+        # }
+        # self.race_dict = {
+        #     "White": 0,
+        #     "Black": 1,
+        #     "Asian": 2,
+        #     "More than one": 3,
+        #     "Unknown": 4,
+        #     "Am Indian/Alaskan": 5,
+        # }
+        # self.diag_dict = {
+        #     "CN": 0,
+        #     "MCI": 1,
+        #     "AD": 2,
+        # }
+        # self.sex_dict = {
+        #     "M": 0,
+        #     "F": 1,
+        # }
 
         self.min_age = min_max_args["age_at_scan"][0]
         self.max_age = min_max_args["age_at_scan"][1]
 
-        self.min_edu_level = min_max_args["education_level"][0]
-        self.max_edu_level = min_max_args["education_level"][1]
+        # self.min_edu_level = min_max_args["education_level"][0]
+        # self.max_edu_level = min_max_args["education_level"][1]
 
         self.min_age_floor = min_max_args["min_age_floor"]
         self.mean_tracker_width = min_max_args["mean_tracker_width"]
@@ -140,19 +137,19 @@ class CondWarpDataset(data.Dataset):
     def __getitem__(self, idx):
         
         image_path = os.path.join(self.dataset_root, self.df.iloc[idx]["scan_path"])
-        scan_id = self.df.iloc[idx]["scan_id"]
-        participant_id = self.df.iloc[idx]["participant_id"]
-        alternate_id = self.df.iloc[idx]["alternate_id"]
-        sex = self.sex_dict[self.df.iloc[idx]["sex"]]
-        age_initial = self.df.iloc[idx]["age_initial"]
+        # scan_id = self.df.iloc[idx]["scan_id"]
+        # participant_id = self.df.iloc[idx]["participant_id"]
+        # alternate_id = self.df.iloc[idx]["alternate_id"]
+        # sex = self.sex_dict[self.df.iloc[idx]["sex"]]
+        # age_initial = self.df.iloc[idx]["age_initial"]
         age_at_scan = self.df.iloc[idx]["age_at_scan"]
         norm_age_at_scan = (age_at_scan - self.min_age) / (self.max_age - self.min_age)
-        edu_level = self.df.iloc[idx]["education_level"]
-        norm_edu_level = (edu_level - self.min_edu_level) / (self.max_edu_level - self.min_edu_level)
-        marital_status = self.marital_status_dict[self.df.iloc[idx]["marital_status"]]
-        ethnic_category = self.ethnicity_dict[self.df.iloc[idx]["ethnic_category"]]
-        racial_category = self.race_dict[self.df.iloc[idx]["racial_category"]]
-        diagnosis = self.diag_dict[self.df.iloc[idx]["diagnosis"]]
+        # edu_level = self.df.iloc[idx]["education_level"]
+        # norm_edu_level = (edu_level - self.min_edu_level) / (self.max_edu_level - self.min_edu_level)
+        # marital_status = self.marital_status_dict[self.df.iloc[idx]["marital_status"]]
+        # ethnic_category = self.ethnicity_dict[self.df.iloc[idx]["ethnic_category"]]
+        # racial_category = self.race_dict[self.df.iloc[idx]["racial_category"]]
+        # diagnosis = self.diag_dict[self.df.iloc[idx]["diagnosis"]]
         age_bucket = self.df.iloc[idx]["age_bucket"]
 
         image = sf.load_volume(image_path)
@@ -167,7 +164,6 @@ class CondWarpDataset(data.Dataset):
         
             image = image ** gamma_value
     
-
         image = image / image.percentile(self.volume_args["percentile_normalisation"])
 
         if self.volume_args["random_noise"]:

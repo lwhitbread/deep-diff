@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.distributions.normal import Normal
 import functools
 import inspect
-from typing import List, Tuple, Dict, Union, Optional, Callable, Iterable
+from typing import List, Tuple, Callable
 
 sys.path.append("../")
 from src.modules import *
