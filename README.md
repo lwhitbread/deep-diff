@@ -12,7 +12,7 @@ Deformable brain templates are an important tool in many neuroimaging analyses. 
 
 ## Dependencies
 
-We recommend setting up an anaconda environment and installing all dependencies as,
+We recommend setting up an anaconda environment and installing all dependencies using the provided `environment.yml` file. To do this, run the following commands from the root directory of the repository:
 
 ```bash
 conda env create -f environment.yml
