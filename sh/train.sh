@@ -25,10 +25,7 @@ while getopts c:i:d:e:u:-: OPT; do
   fi
   case "$OPT" in
     c | config-file )     needs_arg ; CONFIG_FILE="${OPTARG}" ;;
-    # a | location )        needs_arg ; LOCATION="$OPTARG" ;;
     i | run-id )          needs_arg ; RUN_ID="$OPTARG" ;;
-    # g | nb-gpus )         needs_arg ; NB_GPUS="$OPTARG" ;;
-    # r | linreg )          needs_arg ; LINREG="$OPTARG" ;;
     d | device )          needs_arg ; DEVICE="$OPTARG" ;;
     e | checkpoint-path ) CHECKPOINT_PATH="$OPTARG" ;;
     u | use-checkpoint )  needs_arg ; USE_CHECKPOINT="$OPTARG" ;;
@@ -42,19 +39,13 @@ mkdir -p ../logs/${RUN_ID}
 
 if [ -z "$CHECKPOINT_PATH" ]; then
   python ../scripts/train_warp.py --config-file ${CONFIG_FILE} \
-                                  # --location ${LOCATION} \
                                   --run-id ${RUN_ID} \
-                                  # --nb-gpus ${NB_GPUS} \
-                                  # --linreg ${LINREG} \
                                   --device ${DEVICE} \
                                   --use-checkpoint ${USE_CHECKPOINT} \
                                   2>&1 | tee ../logs/${RUN_ID}/${RUN_ID}.log
 else
   python ../scripts/train_warp.py --config-file ${CONFIG_FILE} \
-                                  # --location ${LOCATION} \
                                   --run-id ${RUN_ID} \
-                                  # --nb-gpus ${NB_GPUS} \
-                                  # --linreg ${LINREG} \
                                   --device ${DEVICE} \
                                   --use-checkpoint ${USE_CHECKPOINT} \
                                   --checkpoint ${CHECKPOINT_PATH} \
