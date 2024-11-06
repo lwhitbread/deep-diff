@@ -1,0 +1,21 @@
+# data folders
+results
+models
+logs
+
+# image files
+*.png
+*.jpg
+*.gif
+
+# data files
+*.csv
+*.json
+*.npy
+*.xml
+*.nii*
+*.nii.gz
+*.npz
+
+# cache files
+*__pycache__*
