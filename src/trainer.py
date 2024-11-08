@@ -29,7 +29,7 @@ class Trainer:
         loss_args: dict = None,
         use_ncc: bool = False,
         use_mixed_ncc_mse: bool = False,
-        mixed_ncc_weight: float = 0.01,
+        mixed_ncc_weight: float = 0.25,
         ncc_window: list = None,
         optimiser_type: str = "Adam",
         optimiser_args: dict = None,

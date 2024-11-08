@@ -155,5 +155,5 @@ loss_weights = {
 
 use_ncc = False
 use_mixed_ncc_mse = False
-mixed_ncc_weight = 0.01
+mixed_ncc_weight = 0.25
 ncc_window = [9,9,9]
