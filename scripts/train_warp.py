@@ -145,6 +145,7 @@ if __name__ == "__main__":
         print("No int_smoothing_args_mean_trackers found in config file, so default is None\n \
               (i.e., use int_smoothing_args for mean trackers)")
         pass
+    
     intensity_field_act = config["model_args"]["intensity_field_act"]
     intensity_field_act_mult = float(config["model_args"]["intensity_field_act_mult"])
     intensity_act = config["model_args"]["intensity_act"]
