@@ -4,8 +4,6 @@ import argparse
 import configparser
 import datetime
 
-from src.loss import *
-from src.modules import *
 from src.networks import *
 from src.datasets import *
 from src.trainer import *
@@ -62,9 +60,8 @@ if __name__ == "__main__":
     init_with_constant_sched = eval(config["run_args"]["init_with_constant_sched"])
     constant_sched_epochs = int(config["run_args"]["constant_sched_epochs"])
     constant_sched_lr = float(config["run_args"]["constant_sched_lr"])
-    
+
     dataset_args = eval(config["dataset_args"]["dataset_args"])
-    
     dataset_root = config[f"data_paths"]["dataset_root"]
     template_path = config[f"data_paths"]["template_path"]
 
