@@ -20,7 +20,6 @@ class NCC:
         self.device = device
         self.win = win
 
-
     def loss(self, y_true, y_pred):
         with torch.autocast(
             enabled=False, 
@@ -93,7 +92,6 @@ class MixedNCCMSE:
         ncc_loss = self.ncc.loss(y_true, y_pred)
         mse_loss = self.mse.loss(y_true, y_pred)
         return self.ncc_weight * ncc_loss + (1 - self.ncc_weight) * mse_loss
-
 
 class MSE:
     """
@@ -181,12 +179,7 @@ class SparsePenalty:
             if region_weights is not None:
                 region_weights = self.downsize(region_weights)
 
-        
         if self.threshold_type == "soft":
-            #ones = torch.Tensor([1.]).to(self.device) * self.true_tensor_value
-
-            # y_true is the ground truth images (used for spatial gradient)
-
             if self.use_spatial_grad:
                 # update to order 1f
                 if self.nb_dims == 2:
@@ -217,7 +210,6 @@ class SparsePenalty:
             y_pred = torch.sigmoid(y_pred / self.threshold) 
             y_pred = torch.square(y_pred - self.sigmoid_centre_y) 
 
-            # DISCUSS
             # apply the spatial gradient
             if self.use_spatial_grad:
                 if region_weights is not None:
@@ -343,7 +335,6 @@ class Grad:
                 d = torch.mean(dx) + torch.mean(dy) + torch.mean(dz)
             else:
                 d = torch.mean(dx) + torch.mean(dy)
-
 
             grad = d / self.nb_dims
 

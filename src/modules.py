@@ -386,7 +386,6 @@ class GaussianSmoothing(nn.Module):
         else:
             return self.conv(input, weight=self.weight, groups=self.groups, padding=self.pad)
 
-
 class IntegrationLayer(nn.Module):
     """
     Integrates a vector field via scaling and squaring. 
@@ -451,7 +450,6 @@ class IntegrationLayer(nn.Module):
                 vec = self.smoothing(vec)
 
         return vec
-
 
 class ConvBlock(nn.Module):
     """
@@ -716,41 +714,3 @@ class AllMeansTracker(nn.Module):
                 if mean_field_idx == idx:
                     # return tracker.to(self.device).get_mean_field()
                     return tracker.get_mean_field()
-
-
-
-#############################################################################
-#############################################################################
-## UNUSED CODE
-#############################################################################
-#############################################################################
-
-## TBD WITH MJ: HAVE NOT GOT TANH ACTIVATION TO WORK YET
-## To be considered and adjusted - we want to use tanh activation to limit the displacement field
-def DiffeomorphicActivate(flow_field,size):
-    """ Activation Function
-    Args:
-        flow_field ([tensor array]): A n-dimension array containing the flow field in each direction
-        size ([list]): [description]: The maximum size of the field, to limit the size of the initial displacement
-    Returns:
-        flow_field [tensor array]: Flow field after the activation function has been applied.
-    """
-
-    # Assert ndims is 2D or 3D
-    assert flow_field.size()[1] in [2,3]
-    assert len(size) in [2,3]
-    
-
-    if len(size) == 3:
-        flow_1= torch.tanh(flow_field[:,0,:,:,:])*(1/size[0]) 
-        flow_2 = torch.tanh(flow_field[:,1,:,:,:])*(1/size[1])
-        flow_3= torch.tanh(flow_field[:,2,:,:,:])*(1/size[2])
-        flow_field =torch.stack((flow_1,flow_2,flow_3), dim=1)
-    elif len(size) == 2:
-        flow_1= torch.tanh(flow_field[:,0,:,:])*(1/size[0])
-        flow_2 = torch.tanh(flow_field[:,1,:,:])*(1/size[1])
-        flow_field =torch.stack((flow_1,flow_2), dim=1)
-
-    return flow_field
-
-
