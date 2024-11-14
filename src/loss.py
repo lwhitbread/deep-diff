@@ -62,14 +62,10 @@ class NCC:
             cross = IJ_sum - u_J * I_sum - u_I * J_sum + u_I * u_J * sum_filt.numel()
             I_var = I2_sum - 2 * u_I * I_sum + u_I * u_I * sum_filt.numel()
             J_var = J2_sum - 2 * u_J * J_sum + u_J * u_J * sum_filt.numel()
-            # print("Cross: ", cross)
-            # print("I_var: ", I_var)
-            # print("J_var: ", J_var)
 
             # Compute NCC
             cc = cross * cross / (I_var * J_var + 1e-5)
             out = 1 - torch.mean(cc)
-            # print(f"NCC: {out}")
 
         return out
     
@@ -164,7 +160,6 @@ class SparsePenalty:
         else:
             self.downsize = None
             self.upsize = None
-
 
     def loss(
          self, 
@@ -341,7 +336,6 @@ class Grad:
             if self.loss_mult is not None:
                 grad = grad * self.loss_mult
             return grad
-
 
 def Get_Ja(flow):
     '''

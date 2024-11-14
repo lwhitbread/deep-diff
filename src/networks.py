@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torch.nn as nn
 from torch.distributions.normal import Normal
 import functools
@@ -497,8 +496,6 @@ class RegNet(nn.Module):
         
         assert isinstance(int_smoothing_args, dict), \
             "int_smoothing_args must be a dict"
-
-        # self.use_cortical_mask = use_cortical_mask
         
         self.unet = UNet(
             in_shape = in_shape,

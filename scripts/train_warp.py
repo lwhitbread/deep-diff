@@ -18,10 +18,9 @@ if __name__ == "__main__":
     parser.add_argument("--use-checkpoint", required=False, help="use checkpoint", default = False)
     args = parser.parse_args()
     config_file = args.config_file
-    device = int(args.device)
+    device = torch.device(int(args.device) if torch.cuda.is_available() else "cpu")
     use_checkpoint = eval(args.use_checkpoint)
     checkpoint = args.checkpoint
-    
     run_id = args.run_id
     assert run_id != "", "run_id must not be empty"
 
@@ -112,7 +111,6 @@ if __name__ == "__main__":
         print(f"No unet_upsample_mode found in config file, so default is nearest")
 
     nb_unet_feats_int  = eval(config["model_args"]["nb_unet_feats_int"])
-    device = torch.device(device if torch.cuda.is_available() else "cpu")
     img_dims = eval(config["model_args"]["img_dims"])
     gen_features = int(config["model_args"]["gen_features"])
     gen_features_blocks = int(config["model_args"]["gen_features_blocks"])
@@ -124,23 +122,15 @@ if __name__ == "__main__":
     try:
         int_smoothing_args_st_1 = eval(config["model_args"]["int_smoothing_args_st_1"])
         int_smoothing_args_st_2 = eval(config["model_args"]["int_smoothing_args_st_2"])
-        print(f"int_smoothing_args_st_1: {int_smoothing_args_st_1}")
-        print(f"int_smoothing_args_st_2: {int_smoothing_args_st_2}")
     except:
         print("No int_smoothing_args_st_1 or int_smoothing_args_st_2 found in config file, so trying to use int_smoothing_args")
         int_smoothing_args_st_1 = eval(config["model_args"]["int_smoothing_args"])
         int_smoothing_args_st_2 = eval(config["model_args"]["int_smoothing_args"])
-        print(f"int_smoothing_args_st_1: {int_smoothing_args_st_1}")
-        print(f"int_smoothing_args_st_2: {int_smoothing_args_st_2}")
     
-    # int_smoothing_args = eval(config["model_args"]["int_smoothing_args"])
     int_smoothing_args_mean_trackers = None
     try:
         int_smoothing_args_mean_trackers = eval(config["model_args"]["int_smoothing_args_mean_trackers"])
-        print(f"int_smoothing_args_mean_trackers: {int_smoothing_args_mean_trackers}")
     except:
-        print("No int_smoothing_args_mean_trackers found in config file, so default is None\n \
-              (i.e., use int_smoothing_args for mean trackers)")
         pass
     
     intensity_field_act = config["model_args"]["intensity_field_act"]

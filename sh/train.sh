@@ -8,8 +8,6 @@ echo $CONDA_PREFIX
 # set the python path
 PROJECT_PATH=$(pwd)/..
 export PYTHONPATH="$PROJECT_PATH:$PYTHONPATH"
- 
-# set default values for non-required arguments
 
 # https://stackoverflow.com/questions/402377/using-getopts-to-process-long-and-short-command-line-options
 

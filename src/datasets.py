@@ -28,7 +28,6 @@ class CondWarpDataset(data.Dataset):
         self.min_age_floor = min_max_args["min_age_floor"]
         self.mean_tracker_width = min_max_args["mean_tracker_width"]
 
-
     def __len__(self):
         return len(self.df)
 
@@ -325,7 +324,6 @@ def get_dls_and_template(
         )
     
     dls_and_template.append((torch.from_numpy(template.copy()), None))
-    
     dls_and_template.append(min_max_args)
     dls_and_template.append(volume_args)
     

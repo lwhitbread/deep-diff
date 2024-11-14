@@ -616,7 +616,6 @@ class Trainer:
         mean_epoch_loss = returns[1]
         int_dict = returns[2]
     
-        
         self.history[epoch_type]["loss"].append(epoch_total_loss)
         self.history[epoch_type]["recon_loss"].append(mean_epoch_loss[0])
         self.history[epoch_type]["grad_1_loss"].append(mean_epoch_loss[1])
