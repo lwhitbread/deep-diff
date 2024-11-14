@@ -9,7 +9,7 @@ from src.datasets import *
 from src.trainer import *
 
 if __name__ == "__main__":
-# Get system arguments to apply through script
+    # Get system arguments to apply through script
     parser = argparse.ArgumentParser() 
     parser.add_argument("--config-file", required=True, help="config filename to use")
     parser.add_argument("--run-id", required=True, help="run id to use for saving results")
