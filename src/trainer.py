@@ -290,54 +290,52 @@ class Trainer:
 
         # gradient loss on stage 1 displacement, order denotes derivative order
         grad_loss_cond_temp = Grad(penalty='l2', loss_mult = 1, order = 2, nb_dims = self.nb_dims).loss
-        self.weights.append(self.loss_weights["grad_1"]) # default is 0.01
+        self.weights.append(self.loss_weights["grad_1"])
         self.losses.append(grad_loss_cond_temp)
 
         # deformation/displacement loss on stage 1
-        # using this makes it difficult to morph the group template to an appropriate cond temp (i.e., matching analytic expectations)
         flow_loss_cond_temp = MSE().loss
-        self.weights.append(self.loss_weights["disp_1"]) # default is 0.00
+        self.weights.append(self.loss_weights["disp_1"])
         self.losses.append(flow_loss_cond_temp)
         
         # gradient loss on stage 2 displacement, order denotes derivative order
         grad_loss = Grad(penalty='l2', loss_mult=1, order = 2, nb_dims = self.nb_dims).loss
-        self.weights.append(self.loss_weights["grad_2"]) # default is 0.01
+        self.weights.append(self.loss_weights["grad_2"])
         self.losses.append(grad_loss)
         
         # deformation/displacement loss on stage 2
         flow_loss = MSE().loss
-        self.weights.append(self.loss_weights["disp_2"]) # default is 0.01
+        self.weights.append(self.loss_weights["disp_2"])
         self.losses.append(flow_loss)
 
         # loss on the gen cond template intensity modulation field on stage 1
         cond_temp_intensity_loss = SparsePenalty(
-            threshold = self.loss_args["SparsePenalty"]["threshold"], #if "threshold" in self.loss_args["SparsePenalty"] else 0.1, 
+            threshold = self.loss_args["SparsePenalty"]["threshold"],
             nb_dims = self.nb_dims, 
             device = self.device,
-            use_spatial_grad = self.loss_args["SparsePenalty"]["use_spatial_grad"], # if "use_spatial_grad" in self.loss_args["SparsePenalty"] else None,
-            spatial_grad_mult = self.loss_args["SparsePenalty"]["spatial_grad_mult"], # if "spatial_grad_mult" in self.loss_args["SparsePenalty"] else 1.,
+            use_spatial_grad = self.loss_args["SparsePenalty"]["use_spatial_grad"],
+            spatial_grad_mult = self.loss_args["SparsePenalty"]["spatial_grad_mult"],
             downsample_factor = self.downsize_factor_int_st_1,
             img_dims = self.img_dims,
             ).loss
-        self.weights.append(self.loss_weights["int_1"]) # default is 0.02
+        self.weights.append(self.loss_weights["int_1"])
         self.losses.append(cond_temp_intensity_loss)
 
         # loss on the sample intensity modulation field on stage 2
         sample_intensity_loss = SparsePenalty(
-            threshold = self.loss_args["SparsePenalty"]["threshold"], # if "threshold" in self.loss_args["SparsePenalty"] else 0.1, 
+            threshold = self.loss_args["SparsePenalty"]["threshold"],
             nb_dims = self.nb_dims, 
             device = self.device,
-            use_spatial_grad = self.loss_args["SparsePenalty"]["use_spatial_grad"], # if "use_spatial_grad" in self.loss_args["SparsePenalty"] else None,
-            spatial_grad_mult = self.loss_args["SparsePenalty"]["spatial_grad_mult"], # if "spatial_grad_mult" in self.loss_args["SparsePenalty"] else 1.,
+            use_spatial_grad = self.loss_args["SparsePenalty"]["use_spatial_grad"],
+            spatial_grad_mult = self.loss_args["SparsePenalty"]["spatial_grad_mult"],
             downsample_factor = self.downsize_factor_int_st_2,
             img_dims = self.img_dims,
             ).loss
-        self.weights.append(self.loss_weights["int_2"]) # default is 0.02
+        self.weights.append(self.loss_weights["int_2"])
         self.losses.append(sample_intensity_loss)
 
         # loss on mean field where used to adjust cond templates
         mean_field_loss = MSE().loss
-        # print(self.loss_weights["mean_trackers"])
         self.weights.append(self.loss_weights["mean_trackers"])
         self.losses.append(mean_field_loss)
 
@@ -350,7 +348,6 @@ class Trainer:
 
         self.epoch_step_time = []
 
-        
         assert type(self.intensity_field_multiplier_st_1) == type(self.intensity_field_multiplier_st_2), \
             "intensity_field_multiplier_st_1 and intensity_field_multiplier_st_2 must be of same type. Either both scalar or both iterable or both None."
         
@@ -376,7 +373,6 @@ class Trainer:
                 if epoch <= self.checkpoint_epoch:
                     print(f"Skipping epoch {epoch + 1}")
                     continue
-
 
             if self.intensity_field_multiplier_st_1 is not None and self.intensity_field_multiplier_st_2 is not None:
 
@@ -531,8 +527,7 @@ class Trainer:
             self.epoch_step_time.append(end - start)
             self.train_time = end - start_train_time
             print(f"  epoch {epoch + 1} took {end - start:.3f} seconds")
-
-            
+         
             if self.use_checkpoint:
                     self.save_checkpoint(
                         epoch = epoch,
@@ -593,7 +588,6 @@ class Trainer:
             self.checkpoint_loaded = True
             self.checkpoint_epoch = checkpoint["epoch"]
             print(f"Loaded checkpoint from {checkpoint_path}")
-
     
     def _do_epoch(
         self,
@@ -614,7 +608,6 @@ class Trainer:
 
         epoch_total_loss = returns[0]
         mean_epoch_loss = returns[1]
-        int_dict = returns[2]
     
         self.history[epoch_type]["loss"].append(epoch_total_loss)
         self.history[epoch_type]["recon_loss"].append(mean_epoch_loss[0])
@@ -631,25 +624,7 @@ class Trainer:
         self.history[epoch_type]["learning_rate"].append(self.optimiser.param_groups[0]['lr'] if epoch_type == "train" else None)
 
         print(f"  {epoch_type} loss (total loss): {epoch_total_loss}")
-        
-        int_1_max = int_dict["int_1_max"]
-        int_1_min = int_dict["int_1_min"]
-        int_2_max = int_dict["int_2_max"]
-        int_2_min = int_dict["int_2_min"]
-        int_1_mean = int_dict["int_1_mean"]
-        int_2_mean = int_dict["int_2_mean"]
 
-        # TODO: temporary printout while prototyping
-        if self.intensity_field_multiplier_st_1 != 0 or self.intensity_field_multiplier_st_2 != 0:
-            print(f"\nIntensity field stats for this {epoch_type} epoch {epoch + 1}:")
-            print(f"1 intensity field max: {int_1_max:.6f}")
-            print(f"1 intensity field min: {int_1_min:.6f}")
-            print(f"1 intensity field mean: {int_1_mean:.6f}")
-            print(f"2 intensity field max: {int_2_max:.6f}")
-            print(f"2 intensity field min: {int_2_min:.6f}")
-            print(f"2 intensity field mean: {int_2_mean:.6f}")
-            print()
-        
         if (epoch + 1) % 5 == 0:
             print(f"  {epoch_type} loss (elements): \n \
                     \tgrad_cond_temp: {mean_epoch_loss[1]}; \n \
@@ -685,13 +660,6 @@ class Trainer:
 
         len_dataloader = len(dataloader)
         
-        int_1_max = -np.inf
-        int_1_min = np.inf
-        int_1_mean = 0.
-        int_2_max = -np.inf
-        int_2_min = np.inf
-        int_2_mean = 0.
-        
         for idx_0, batch in tqdm(
             enumerate(dataloader), 
             total = len_dataloader, 
@@ -701,8 +669,6 @@ class Trainer:
         ):
             
             images = batch["image"]
-    
-            scan_path = batch["scan_path"]
             curr_batch_size = images.shape[0]
 
             if self.use_age_buckets:
@@ -710,8 +676,7 @@ class Trainer:
                 if idx_0 == 0 and epoch == 0:
                     print(f"using age buckets: {params}")
             else:
-                params = batch["param"].view(curr_batch_size, 1).float()
-                params = params.to(self.device)
+                params = batch["param"].view(curr_batch_size, 1).float().to(self.device)
 
                 if idx_0 == 0 and epoch == 0:
                     print(f"using normal ages: {params.view(-1)}")
@@ -730,7 +695,7 @@ class Trainer:
             prop_means_idx_0 = batch["prop_means_idx_0"].to(torch.float32).to(self.device)
             assert means_idx_0.shape[0] == curr_batch_size
 
-            lost_list, loss, pred = self.network_execute(
+            lost_list = self.network_execute(
                 params,
                 template_tensor,
                 images,
@@ -745,47 +710,13 @@ class Trainer:
 
             epoch_loss.append(lost_list)
             epoch_total_loss.append(sum(lost_list))
-                
-            _temp_int_1_max = pred[3].detach().cpu().max()
-            int_1_max = _temp_int_1_max if _temp_int_1_max > int_1_max else int_1_max    
-            _temp_int_1_min = pred[3].detach().cpu().min()
-            int_1_min = _temp_int_1_min if _temp_int_1_min < int_1_min else int_1_min  
-            _temp_int_2_max = pred[4].detach().cpu().max()
-            int_2_max = _temp_int_2_max if _temp_int_2_max > int_2_max else int_2_max
-            _temp_int_2_min = pred[4].detach().cpu().min()
-            int_2_min = _temp_int_2_min if _temp_int_2_min < int_2_min else int_2_min         
-            
-            _int_1_mean = pred[3].detach().cpu().mean()
-            _int_2_mean = pred[4].detach().cpu().mean()
-
-            curr_mean_prop = 1. / (idx_0 + 1)
-            old_mean_prop = 1. - curr_mean_prop
-            int_1_mean = _int_1_mean * curr_mean_prop + int_1_mean * old_mean_prop
-            int_2_mean = _int_2_mean * curr_mean_prop + int_2_mean * old_mean_prop
-
-        int_dict = {
-            "int_1_max": int_1_max,
-            "int_1_min": int_1_min,
-            "int_2_max": int_2_max,
-            "int_2_min": int_2_min,
-            "int_1_mean": int_1_mean,
-            "int_2_mean": int_2_mean,
-        }
-                
-        images = None
-        template_tensor = None
-        params = None
-        means_idx_0 = None
-        prop_means_idx_0 = None
-        pred = None
 
         epoch_total_loss = np.mean(epoch_total_loss)
         mean_epoch_loss = np.mean(epoch_loss, axis = 0)
 
         return (
             epoch_total_loss, 
-            mean_epoch_loss, 
-            int_dict, 
+            mean_epoch_loss,
         )
     
     def _network_execute(
@@ -909,7 +840,7 @@ class Trainer:
                         self.scheduler.step(epoch + itr / self.len_train_loader)
                 self.optimiser.zero_grad(set_to_none = True)
 
-        return lost_list, loss, pred
+        return lost_list
     
     def save_history(
         self,
