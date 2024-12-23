@@ -566,7 +566,6 @@ class Trainer:
         else:
             torch.save(checkpoint, f"{self.runtime_dir}/../models/checkpoint_epoch_{epoch + 1}_time_{time.strftime('%Y-%m-%d_%H.%M.%S')}.pt")
         
-
         print(f"Checkpoint saved at epoch {epoch + 1}")
         print(f"Training to this point took {self.train_time / 60:.3f} minutes")
         exit()
