@@ -176,22 +176,20 @@ class SparsePenalty:
 
         if self.threshold_type == "soft":
             if self.use_spatial_grad:
-                # update to order 1f
                 if self.nb_dims == 2:
                     spatial_grad_adj = filters.spatial_gradient(
                         image, 
                         mode = "diff", 
-                        order = 1 # TODO: play around with order 1 or 2
+                        order = 1,
                     )
                 
                 elif self.nb_dims == 3:
                     spatial_grad_adj = filters.spatial_gradient3d(
                         image, 
                         mode = "diff", 
-                        order = 1 # TODO: play around with order 1 or 2
+                        order = 1,
                     )
                 
-                # can we gaussian blur this?
                 spatial_grad_adj = torch.mean(
                     torch.square(
                         spatial_grad_adj
@@ -265,7 +263,8 @@ class Grad:
         self.penalty = penalty
         self.loss_mult = loss_mult
         self.nb_dims = nb_dims
-        assert self.nb_dims in [2, 3], f"should be 2 or 3 dimensions. found: {self.ndims}"
+        assert self.nb_dims in [2, 3], \
+            f"should be 2 or 3 dimensions. found: {self.nb_dims}"
         self.order = order
         self.use_grad_filter = use_grad_filter
 

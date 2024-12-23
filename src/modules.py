@@ -367,7 +367,6 @@ class GaussianSmoothing(nn.Module):
             print(self.weight.shape)
             print(self.weight)
 
-
     def forward(
             self, 
             input: torch.Tensor,

@@ -561,8 +561,7 @@ class Trainer:
                 os.remove(os.path.join(self.runtime_dir, file))
         
         if self.run_monitor_args is not None:
-            torch.save(checkpoint, f"{self.runtime_dir}/../models/{self.run_monitor_args['id']}/run_{self.run_monitor_args['id']}_checkpoint_epoch_{epoch + 1}_time_{time.strftime('%Y-%m-%d_%H.%M.%S')}.pt")
-        
+            torch.save(checkpoint, f"{self.runtime_dir}/../models/{self.run_monitor_args['id']}/run_{self.run_monitor_args['id']}_checkpoint_epoch_{epoch + 1}_time_{time.strftime('%Y-%m-%d_%H.%M.%S')}.pt")  
         else:
             torch.save(checkpoint, f"{self.runtime_dir}/../models/checkpoint_epoch_{epoch + 1}_time_{time.strftime('%Y-%m-%d_%H.%M.%S')}.pt")
         
